@@ -1,0 +1,3 @@
+﻿  integ-funcs.cxx
+c:\users\nick\documents\school\grad\classes\mech 510\quadrature\integ-funcs.cxx(47): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+  Quadrature.vcxproj -> C:\Users\Nick\Documents\School\Grad\Classes\MECH 510\Quadrature\Quadrature\Debug\Quadrature.exe
