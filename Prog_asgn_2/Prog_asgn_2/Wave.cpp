@@ -2,26 +2,26 @@
 #include <iostream>
 #include <math.h>
 #include <fstream>
-#include<vector>
+#include <vector>
 
 using namespace std;
 
-constexpr int imax = 11
-constexpr double xmax = 1.0
-constexpr double dx = xmax / (imax - 1)
+constexpr int imax = 11;
+constexpr double xmax = 1.0;
+constexpr double dx = xmax / (imax - 1);
 
-constexpr double u = 2.0
-constexpr double CFL = 0.4
+constexpr double u = 2.0;
+constexpr double CFL = 0.4;
 constexpr double dt = CFL*dx/u;
-constexpr double tend = 1;
+constexpr double tend = 0.1;
 constexpr int num_t_steps = tend/dt;
 
 
 template<typename T>
 void printMatrix(T mat, const int N, const int M, const char* S) {
 	cout << "\n" << S << ":\n";
-	for (int i = N-2; i > 0; i--) {
-		for (int j = 1; j < N-1; ++j)
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++)
 			cout << *(*(mat + i) + j) << "  ";
 		cout << endl;
 	}
@@ -52,13 +52,13 @@ void setBoundary(double(&domain)[num_t_steps][imax], int t_step){
 
 int main(){
 
-	double T[t_steps][imax] = {{0}};
+	double T[num_t_steps][imax] = {{0}};
 
 
 	setInitX(T);
 
 	printMatrix(T,num_t_steps, imax, "T" );
-
+	
 	getchar();
 	return 0;
 }
