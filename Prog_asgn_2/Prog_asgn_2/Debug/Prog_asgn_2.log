@@ -1,0 +1,4 @@
+﻿  Wave.cpp
+c:\users\nick\documents\school\grad\classes\mech510\prog_asgn_2\prog_asgn_2\wave.cpp(17): warning C4244: 'initializing': conversion from 'double' to 'const int', possible loss of data
+c:\users\nick\documents\school\grad\classes\mech510\prog_asgn_2\prog_asgn_2\wave.cpp(32): warning C4018: '<': signed/unsigned mismatch
+  Prog_asgn_2.vcxproj -> C:\Users\Nick\Documents\School\Grad\Classes\MECH510\Prog_asgn_2\Debug\Prog_asgn_2.exe
