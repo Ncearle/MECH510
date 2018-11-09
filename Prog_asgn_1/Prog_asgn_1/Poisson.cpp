@@ -194,11 +194,11 @@ int main()
 	double T[imax][jmax] = { {0} };			// Temperatue Matrix
 	double P[imax][jmax] = { {0} };			// Pressure Matrix
 	double S[imax][jmax] = { {0} };			// Source term
-	double ExactT[imax][jmax] = { {0} };		// Exact Solution matrix
-	double err[imax][jmax] = { {0} };			// Error matrix
+	double ExactT[imax][jmax] = { {0} };	// Exact Solution matrix
+	double err[imax][jmax] = { {0} };		// Error matrix
 	vector<double> delVec;					// Delta vector to store max change per iteration
 	delVec.reserve(10000);					// Hopefully never more than 10000 iterations
-	double delta[imax - 2][jmax - 2];			// Change matrix
+	double delta[imax - 2][jmax - 2];		// Change matrix
 	double tol = pow(10, -10);				// Change tolerance
 	double omega = 1.5;						// Over-relaxation factor (w = 1 = No over-relaxation)
 	double area = dx * dy;
