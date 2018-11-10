@@ -65,3 +65,17 @@ xlabel('Real \lambda\Deltat');
 ylabel('Imag \lambda\Deltat');
 title('Contour for |\sigma| = 1');
 grid on;
+
+%%
+figure()
+contour(x, y, gmag, [1 1], 'k');
+hold on;
+plot(real(Lub/2),imag(Lub/2));
+plot(0.75*real(Lub/2), 0.75*imag(Lub/2));
+plot(0.5*real(Lub/2), 0.5*imag(Lub/2));
+plot(0.5425*real(Lub/2), 0.5425*imag(Lub/2));
+xlabel('Real \lambda\Deltat');
+ylabel('Imag \lambda\Deltat');
+title('Maximum stable time step for combined scheme with RK4');
+legend('RK3 Stability','\Deltat = 1','\Deltat = 0.75','\Deltat = 0.5','\Deltat = 0.5425');
+grid on;
