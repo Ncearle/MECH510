@@ -11,20 +11,20 @@ LU2_1 = @(phi) -(3 -4*cos(phi) + cos(2*phi) + 1i*(4*sin(phi) - sin(2*phi)));
 
 LU2 = LU2_1(phi);
 
-plot(real(LU2), imag(LU2));
-xlabel('Real \lambda');
-ylabel('Imag \lambda');
+plot(1/2*real(LU2), 1/2*imag(LU2));
+xlabel('Real \lambda *(u\Deltat/\Deltax)');
+ylabel('Imag \lambda *(u\Deltat/\Deltax)');
 title('Eigenvalues for 3rd order upwind-biased and upwind schemes');
 grid on;
 
 %% Second Order Centred Scheme - 2nd Derivative
 
-LC2_2 = @(phi) cos(phi) - 1 ;
+LC2_2 = @(phi) cos(phi) - 1;
 
 LC2 = LC2_2(phi);
 
 hold on;
-plot(real(LC2), imag(LC2));
+plot(2*real(LC2), 2*imag(LC2));
 
 
 %% Combined
@@ -33,7 +33,7 @@ LUC2 = @(phi) -17 + 22*cos(phi) - 5*cos(2*phi) - 5i*(4*sin(phi) - sin(2*phi));
 
 LUC = LUC2(phi);
 
-plot(real(LUC), imag(LUC));
+plot(1/10*real(LUC), 1/10*imag(LUC));
 legend('Second Order Upwind Scheme - 1st Derivative','Second Order Centred Scheme - 2nd Derivative', 'Combined');
 
 %% Runge-Kutta Schemes
@@ -84,7 +84,7 @@ ylabel('Imag \lambda\Deltat');
 title('Contour for |\sigma|');
 grid on;
 
-%%
+%% Max time step for RK4
 figure()
 contour(phi, y, gmag4, [1 1], '--','LineWidth', 2);
 hold on;
@@ -97,4 +97,16 @@ ylabel('Imag \lambda\Deltat');
 title('Maximum stable time step for combined scheme with RK4');
 legend('RK4 Stability','\Deltat = 1','\Deltat = 0.75','\Deltat = 0.5','\Deltat = 0.633');
 grid on;
+
+
+%% Max amp factor for funky 3 stage time advance
+
+phi = pi/2:pi/200:pi;
+f = @(phi) 1/2*(-3 + 4*cos(phi) - cos(2*phi) - 1i*(4*sin(phi) - sin(2*phi)));
+
+sig = @(CFL) max(abs(1 + 97/75*CFL*f(phi) + 24/25*CFL^2*f(phi).^2 + 16/75*CFL^2*f(phi).^3));
+
+cmin = fminsearch(sig, 0.3)
+sig_max = sig(cmin)
+
 
