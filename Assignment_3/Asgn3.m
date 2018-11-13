@@ -1,7 +1,7 @@
 %% MECH 510 - Assignment 3
 % Nicholas Earle
 
-clear;clc;
+clear; clc; close all
 
 phi = 0:2*pi/100:2*pi;
 
@@ -12,9 +12,9 @@ LU2_1 = @(phi) -(3 -4*cos(phi) + cos(2*phi) + 1i*(4*sin(phi) - sin(2*phi)));
 LU2 = LU2_1(phi);
 
 plot(1/2*real(LU2), 1/2*imag(LU2));
-xlabel('Real \lambda *(u\Deltat/\Deltax)');
-ylabel('Imag \lambda *(u\Deltat/\Deltax)');
-title('Eigenvalues for 3rd order upwind-biased and upwind schemes');
+xlabel('Real \lambda *(u/\Deltax)');
+ylabel('Imag \lambda *(u/\Deltax)');
+title('Eigenvalues for 2nd order upwind and centred schemes');
 grid on;
 
 %% Second Order Centred Scheme - 2nd Derivative
@@ -34,7 +34,7 @@ LUC2 = @(phi) -17 + 22*cos(phi) - 5*cos(2*phi) - 5i*(4*sin(phi) - sin(2*phi));
 LUC = LUC2(phi);
 
 plot(1/10*real(LUC), 1/10*imag(LUC));
-legend('Second Order Upwind Scheme - 1st Derivative','Second Order Centred Scheme - 2nd Derivative', 'Combined');
+legend('2nd Upwind - 1st Deriv.','2nd Centred - 2nd Deriv.', 'Combined');
 
 %% Runge-Kutta Schemes
 
@@ -81,7 +81,8 @@ figure()
 contour(phi,y,gmag4,b,'ShowText', 'on');
 xlabel('Real \lambda\Deltat');
 ylabel('Imag \lambda\Deltat');
-title('Contour for |\sigma|');
+title('RK4 Contour for |\sigma|');
+axis tight;
 grid on;
 
 %% Max time step for RK4
@@ -92,8 +93,8 @@ plot(real(LUC/10),imag(LUC/10));
 plot(0.75*real(LUC/10), 0.75*imag(LUC/10));
 plot(0.5*real(LUC/10), 0.5*imag(LUC/10));
 plot(0.633*real(LUC/10), 0.633*imag(LUC/10));
-xlabel('Real \lambda\Deltat');
-ylabel('Imag \lambda\Deltat');
+xlabel('Real \lambda\Deltat *(u/\Deltax)');
+ylabel('Imag \lambda\Deltat *(u/\Deltax)');
 title('Maximum stable time step for combined scheme with RK4');
 legend('RK4 Stability','\Deltat = 1','\Deltat = 0.75','\Deltat = 0.5','\Deltat = 0.633');
 grid on;
