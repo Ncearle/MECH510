@@ -10,24 +10,6 @@ constexpr int imax = 102, jmax = 102;
 constexpr double xmax = 1.0, ymax = 1.0;
 constexpr double dx = xmax / (imax - 2), dy = ymax / (jmax - 2);
 
-template<typename T>
-void printMatrix(T mat, const int N, const int M, const char* S) {
-	cout << "\n" << S << ":\n";
-	for (int i = N-2; i > 0; i--) {
-		for (int j = 1; j < N-1; ++j)
-			cout << *(*(mat + i) + j) << "  ";
-		cout << endl;
-	}
-	cout << endl;
-}
-
-void printVector(vector<double> vec) {			// Prints a vector to the terminal
-	for (int i = 0; i < vec.size(); i++)
-	{
-		cout << vec[i] << endl;
-	}
-}
-
 // Exact Solution over the domain
 double exactSol(double(&exact)[imax][jmax]) {		
 	for (int i = 1; i < imax - 1; i++)
@@ -84,32 +66,6 @@ double maxChange(double(&delta)[imax-2][jmax-2]) {
 		}
 	}
 	return maxChange;
-}
-
-void printMat2File(const char* fileName, double(&matrix)[imax][jmax]){			// Prints Matrix to a file
-	ofstream outfile;
-	outfile.open(fileName);
-	for (int i = imax - 2; i > 0; i--)
-	{
-		for (int j = 1; j < jmax - 1; j++)
-		{
-			outfile << matrix[i][j] << ", ";
-		}
-		outfile << endl;
-	}
-	outfile << endl;
-	outfile.close();
-}
-
-void printVec2File(const char* fileName, vector<double> vec) {			// Prints vector to a file
-	ofstream outfile;
-	outfile.open(fileName);
-	for (int i = 0; i < vec.size(); i++)
-	{
-		outfile << vec[i] << endl;
-	}
-	outfile << endl;
-	outfile.close();
 }
 
 // Boundary conditions for the temperature test case

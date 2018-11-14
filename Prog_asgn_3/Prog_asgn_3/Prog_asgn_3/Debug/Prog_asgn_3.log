@@ -1,0 +1,6 @@
+﻿  Source.cpp
+c:\users\nick\documents\school\ubc\grad\classes\mech510\prog_asgn_3\prog_asgn_3\prog_asgn_3\energy.h(24): warning C4018: '<': signed/unsigned mismatch
+c:\users\nick\documents\school\ubc\grad\classes\mech510\prog_asgn_3\prog_asgn_3\prog_asgn_3\source.cpp(63): error C2440: 'return': cannot convert from 'double [12][12]' to 'double *'
+  c:\users\nick\documents\school\ubc\grad\classes\mech510\prog_asgn_3\prog_asgn_3\prog_asgn_3\source.cpp(63): note: Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or function-style cast
+c:\users\nick\documents\school\ubc\grad\classes\mech510\prog_asgn_3\prog_asgn_3\prog_asgn_3\source.cpp(92): error C2440: 'initializing': cannot convert from 'double *' to 'double'
+  c:\users\nick\documents\school\ubc\grad\classes\mech510\prog_asgn_3\prog_asgn_3\prog_asgn_3\source.cpp(92): note: There is no context in which this conversion is possible

@@ -43,7 +43,7 @@ static void SolveThomas(double LHS[NMAX+2][3], double RHS[NMAX+2],
 
 /* A test program to confirm proper behavior. */
 #include <stdio.h>
-int main()
+int thomas()
 {
   double LHS[12][3], RHS[12];
   int i;
@@ -65,5 +65,6 @@ int main()
     printf("%2d Soln: %10.6f RHS recomputed: %10.6f  Error: %10.6G\n", i, RHS[i], result, result - i);
   }
 
+  getchar();
   return(0);
 }
