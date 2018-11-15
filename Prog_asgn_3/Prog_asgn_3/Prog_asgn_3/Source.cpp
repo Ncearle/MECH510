@@ -24,8 +24,8 @@ constexpr double Ec = 0.1;	// Eckert number
 
 constexpr int ubar = 3;		// average velocity in x [m/s]
 
-constexpr int u0 = 1;		// Initial x velocity
-constexpr int v0 = 1;		// Initial y velocity
+constexpr int u0 = 0;		// Initial x velocity
+constexpr int v0 = 0;		// Initial y velocity
 constexpr int T0 = 1;		// Initial temperature
 
 void init(double(&T)[jmax][imax], double(&u)[jmax][imax], double(&v)[jmax][imax])
@@ -44,8 +44,9 @@ void init(double(&T)[jmax][imax], double(&u)[jmax][imax], double(&v)[jmax][imax]
 	}
 }
 
-void FI2C(double(&T)[jmax][imax], double(&u)[jmax][imax], double(&v)[jmax][imax])
+double** FI2C(double(&T)[jmax][imax], double(&u)[jmax][imax], double(&v)[jmax][imax])
 {
+	double** temp = new double[jmax][imax];
 	for (int j = 1; j < jmax - 1; j++)
 	{
 		for (int i = 1; i < imax - 1; i++)
@@ -54,11 +55,13 @@ void FI2C(double(&T)[jmax][imax], double(&u)[jmax][imax], double(&v)[jmax][imax]
 			double C = -(u[j][i + 1] * T[j][i + 1] - u[j][i - 1] * T[j][i - 1]) / (2 * dx) - (v[j + 1][i] * T[j + 1][i] - u[j - 1][i] * T[j - 1][i]) / (2 * dx);
 
 			// Diffusive term
-			double D = 1 / (Re*Pr) * ((T[j][i + 1] - 2 * T[j][i] + T[j][i - 1]) / pow(dx, 2) + (T[j + 1][i] - 2 * T[j][i] + T[j - 1][i]) / pow(dy, 2));
+			double D = ((T[j][i + 1] - 2 * T[j][i] + T[j][i - 1]) / pow(dx, 2) + (T[j + 1][i] - 2 * T[j][i] + T[j - 1][i]) / pow(dy, 2)) / (Re * Pr);
 
 			temp[j][i] = C + D;
 		}
 	}
+	printMatrix(temp, jmax, imax, "temp");
+
 }
 
 void exact(double(&T)[jmax][imax])
@@ -84,13 +87,12 @@ int main()
 	double Exact[jmax][imax] = { {0} };
 
 	init(T, u, v);
-	printMatrix(T, jmax, imax, "T");
+	printMatrix(T, jmax, imax, "T initial");
 	printMatrix(u, jmax, imax, "u");
 	printMatrix(v, jmax, imax, "v");
-	double FI = FI2C(T, u, v);
 	exact(Exact);
-
-	printMatrix(FI, jmax, imax, "FI");
+	FI2C(T, u, v);
+	printMatrix(T, jmax, imax, "T after flux");
 	printMatrix(Exact, jmax, imax, "Exact");
 	
 
