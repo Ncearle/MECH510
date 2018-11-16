@@ -6,10 +6,7 @@
 #define HEADER_FILE
 #endif // !HEADER_FILE
 
-extern constexpr int imax = 12;
-extern constexpr int jmax = 12;
-
-using namespace std;
+#include "constant.h"
 
 vector<vector<double>> error(vector<vector<double>> num, vector<vector<double>> exact); 	// Standard error
 double L2Norm(vector<vector<double>> error);					// L2 Norm of the error
