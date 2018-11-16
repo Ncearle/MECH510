@@ -16,10 +16,10 @@
 using namespace std;
 
 // Domain Constants
-extern constexpr int imax = 22;
+extern constexpr int imax = 27;
 extern constexpr int jmax = 12;
 
-extern constexpr double xmax = 4;
+extern constexpr double xmax = 5;
 extern constexpr double ymax = 1;
 extern constexpr double dx = xmax / (imax - 2);
 extern constexpr double dy = ymax / (jmax - 2);
@@ -37,6 +37,7 @@ extern constexpr int Re = 50;		// Reynolds number
 extern constexpr double Pr = 0.7;	// Prandtl number
 extern constexpr double Ec = 0.1;	// Eckert number
 
+// For Parts 1,2
 extern constexpr int u0 = 1;		// Initial x velocity
 extern constexpr int v0 = 1;		// Initial y velocity
 extern constexpr int T0 = 1;		// Initial temperature

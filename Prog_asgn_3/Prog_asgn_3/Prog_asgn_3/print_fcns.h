@@ -18,7 +18,7 @@ void printVec2D(vector<vector<double>> vec)
 	{
 		for (int i = 0; i < imax; i++)
 		{
-			cout << fixed << setprecision(4) << vec[j][i] << "  ";
+			cout << fixed << setprecision(3) << vec[j][i] << "  ";
 		}
 		cout << endl;
 	}

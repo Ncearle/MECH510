@@ -15,7 +15,8 @@ void init(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<do
 		{
 			double x = (i - 0.5) / (imax - 2);
 
-			// T[j][i] = T0 * cos(pi*x) * sin(pi*y);	// IC for Part 1,2
+			// IC for Part 1,2
+			// T[j][i] = T0 * cos(pi*x) * sin(pi*y);	
 			// u[j][i] = u0 * y * sin(pi*x);
 			// v[j][i] = v0 * x * cos(pi*y);
 
@@ -72,7 +73,7 @@ vector<vector<double>> FI2C(vector<vector<double>> &T, vector<vector<double>> &u
 			// Diffusive term
 			dif[j][i] = ((T[j][i + 1] - 2 * T[j][i] + T[j][i - 1]) / pow(dx, 2) + (T[j + 1][i] - 2 * T[j][i] + T[j - 1][i]) / pow(dy, 2)) / (Re * Pr);
 
-			FI[j][i] = (con[j][i] + dif[j][i]) - S[i][j];
+			FI[j][i] = (con[j][i] + dif[j][i]) + S[j][i];
 		}
 	}
 	return FI;
@@ -104,7 +105,7 @@ void RK2(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 	init(T, u, v);
 	setBound(T, u, v);
 	printVec2D(T);
-	for (int n = 1; n < 2*tmax; n++)
+	for (int n = 1; n < 5*tmax; n++)
 	{
 		double t = n * dt;
 
@@ -130,7 +131,6 @@ void RK2(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 			}
 		}
 		setBound(T, u, v);
-		// printVec2D(T);
 	}
 }
 
@@ -142,7 +142,7 @@ int main()
 
 	// init(T, u, v);
 	// setBound(T, u, v);
-
+	// printVec2D(T);
 
 	RK2(T, u, v);
 	printVec2D(T);
@@ -156,8 +156,9 @@ int main()
 	double L2TE = L2Norm(TE);
 
 	printVec2D(ExT);
-	printVec2D(TE);
+	// printVec2D(TE);
 	cout << L2TE;
+	
 	// vector<vector<double>> S = source(u, v);
 	// vector<vector<double>> ExS = exactSource();
 	// vector<vector<double>> ExFI = exactFlux();
