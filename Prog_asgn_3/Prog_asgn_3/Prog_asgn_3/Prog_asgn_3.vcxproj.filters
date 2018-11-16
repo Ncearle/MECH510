@@ -23,7 +23,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Header.h">
+    <ClInclude Include="error_fcns.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="print_fcns.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
