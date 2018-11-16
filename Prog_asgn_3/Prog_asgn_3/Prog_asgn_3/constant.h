@@ -16,10 +16,10 @@
 using namespace std;
 
 // Domain Constants
-extern constexpr int imax = 12;
+extern constexpr int imax = 22;
 extern constexpr int jmax = 12;
 
-extern constexpr double xmax = 1;
+extern constexpr double xmax = 4;
 extern constexpr double ymax = 1;
 extern constexpr double dx = xmax / (imax - 2);
 extern constexpr double dy = ymax / (jmax - 2);

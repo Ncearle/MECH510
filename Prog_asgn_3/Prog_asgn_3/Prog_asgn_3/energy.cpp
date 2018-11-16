@@ -72,7 +72,7 @@ vector<vector<double>> FI2C(vector<vector<double>> &T, vector<vector<double>> &u
 			// Diffusive term
 			dif[j][i] = ((T[j][i + 1] - 2 * T[j][i] + T[j][i - 1]) / pow(dx, 2) + (T[j + 1][i] - 2 * T[j][i] + T[j - 1][i]) / pow(dy, 2)) / (Re * Pr);
 
-			FI[j][i] = (con[j][i] + dif[j][i]) + S[i][j];
+			FI[j][i] = (con[j][i] + dif[j][i]) - S[i][j];
 		}
 	}
 	return FI;
@@ -149,9 +149,15 @@ int main()
 	// EE(T, u, v);
 	// printVec2D(T);
 
-	vec2File("T.dat",T);
+	// vec2File("T.dat",T);
 
+	vector<vector<double>> ExT = exactTemp();
+	vector<vector<double>> TE = error(T, ExT);
+	double L2TE = L2Norm(TE);
 
+	printVec2D(ExT);
+	printVec2D(TE);
+	cout << L2TE;
 	// vector<vector<double>> S = source(u, v);
 	// vector<vector<double>> ExS = exactSource();
 	// vector<vector<double>> ExFI = exactFlux();

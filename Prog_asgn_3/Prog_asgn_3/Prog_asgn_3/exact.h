@@ -37,3 +37,17 @@ vector<vector<double>> exactSource()
 	}
 	return ExS;
 }
+
+vector<vector<double>> exactTemp()
+{
+	vector<vector<double>> ExT(jmax, vector<double>(imax));
+	for (int j = 0; j < jmax; j++)
+	{
+		double y = (j - 0.5) / (jmax -2);
+		for (int i = 0; i < imax; i++)
+		{
+			ExT[j][i] = y + 0.75*Pr*Ec*pow(ubar, 2)*(1 - pow(1 - 2*y,4));
+		}
+	}
+	return ExT;
+}
