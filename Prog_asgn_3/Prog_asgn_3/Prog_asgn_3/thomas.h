@@ -18,8 +18,7 @@
  *  LHS: Garbled.
  *  RHS: The solution x.
  */
-static void SolveThomas(double LHS[NMAX+2][3], double RHS[NMAX+2],
-			const int iSize)
+void SolveThomas(vector<vector<double>> &LHS, vector<double> &RHS, int iSize)
 {
   int i;
   /* This next line actually has no effect, but it -does- make clear that
@@ -41,30 +40,30 @@ static void SolveThomas(double LHS[NMAX+2][3], double RHS[NMAX+2],
   }
 }
 
-/* A test program to confirm proper behavior. */
-#include <stdio.h>
-int main()
-{
-  double LHS[12][3], RHS[12];
-  int i;
+// /* A test program to confirm proper behavior. */
+// #include <stdio.h>
+// int thomas()
+// {
+//   double LHS[12][3], RHS[12];
+//   int i;
   
-  for (i = 0; i <= 11; i++) {
-    LHS[i][0] = 1;
-    LHS[i][1] = 2+i;
-    LHS[i][2] = 3;
-    RHS[i]   = i;
-  }
+//   for (i = 0; i <= 11; i++) {
+//     LHS[i][0] = 1;
+//     LHS[i][1] = 2+i;
+//     LHS[i][2] = 3;
+//     RHS[i]   = i;
+//   }
 
-  SolveThomas(LHS, RHS, 12);
+//   SolveThomas(LHS, RHS, 12);
       
-  for (i = 0; i <= 11; i++) {
-    double result;
-    if (i == 0) result = RHS[0]*2 + RHS[1]*3;
-    else if (i == 11) result = RHS[10]*1 + RHS[11]*(2+11);
-    else result = RHS[i-1]*1 + RHS[i]*(2+i) + RHS[i+1]*3;
-    printf("%2d Soln: %10.6f \tRHS recomputed: %10.6f  \tError: %10.6G\n", i, RHS[i], result, result - i);
-  }
+//   for (i = 0; i <= 11; i++) {
+//     double result;
+//     if (i == 0) result = RHS[0]*2 + RHS[1]*3;
+//     else if (i == 11) result = RHS[10]*1 + RHS[11]*(2+11);
+//     else result = RHS[i-1]*1 + RHS[i]*(2+i) + RHS[i+1]*3;
+//     printf("%2d Soln: %10.6f \tRHS recomputed: %10.6f  \tError: %10.6G\n", i, RHS[i], result, result - i);
+//   }
 
-  getchar();
-  return(0);
-}
+//   getchar();
+//   return(0);
+// }
