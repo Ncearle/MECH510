@@ -130,82 +130,128 @@ void RK2(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 	}
 }
 
+// void transpose(vector<vector<double>> &vec)
+// {
+// 	vector<vector<double>> Tr(jmax, vector<double>(imax));
+// 	vector<vector<double>> temp(imax);
+// 	for (int i = 0; i < 12; i++)
+// 	{
+// 		for (int j = 0; j < 27; j++)
+// 		{
+// 			temp[j] = vec[j][i];
+// 		}
+// 		Tr[i] = temp;
+// 	}
+// 	vec = Tr;
+// }
+
+// void transpose(vector<vector<double> > &b)
+// {
+//     if (b.size() == 0)
+//         return;
+
+//     vector<vector<double> > trans_vec(b[1].size(), vector<double>());
+
+//     for (int i = 0; i < b.size(); i++)
+//     {
+//         for (int j = 0; j < b[i].size(); j++)
+//         {
+//             trans_vec[j].push_back(b[i][j]);
+//         }
+//     }
+
+//     b = trans_vec;    // <--- reassign here
+// }
+
 void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<double>> &v)
 {
+	double dt = 0.1;
 	init(T, u, v);
 	vector<vector<double>> S = source(u, v);		// Constant
-	vector<vector<double>> FI = FI2C(T, u, v, S);	// Only changes on every time loop
 
+	// for (int n = 1; n < 101; n++)
+	// {
+		vector<vector<double>> FI = FI2C(T, u, v, S);	// Only changes on every time loop
 
-	// Matrix {[I] + dt*[Dx]}
-	vector<vector<double>> DX(imax, vector<double>(3));
-	vector<double> FIx(imax);
-	vector<vector<double>> Ttilda(jmax);
-	double ax = dt / (Re*Pr*pow(dx, 2));
-	double bx = dt / (2 * dx);
+		// Matrix {[I] + dt*[Dx]}
+		vector<vector<double>> DX(imax, vector<double>(3));
+		vector<double> FIx(imax);
+		vector<vector<double>> Ttilda(jmax);
+		double ax = dt / (Re*Pr*pow(dx, 2));
+		double bx = dt / (2 * dx);
 
-	for (int j = 1; j < jmax - 1; j++)
-	{
-		for (int i = 1; i < imax - 1; i++)
-		{
-			DX[i][0] = -bx * u[j][i-1] - ax;
-
-			DX[i][1] = 1 + 2 * ax;
-
-			DX[i][2] = bx * u[j][i+1] - ax;
-
-			FIx[i] = dt * FI[j][i];
-		}
-
-		DX[0][1] = 1;
-		DX[0][2] = 1;
-		DX[imax-1][1] = 1;
-		DX[imax-1][0] = -1;
-
-		FIx[0] = 0;
-		FIx[imax-1] = 0;
-
-		SolveThomas(DX, FIx, imax);
-		Ttilda[j] = FIx;
-	}
-	printVec2D(Ttilda);
-
-	// Matrix {[I] + dt*[Dy]}
-	vector<vector<double>> DY(jmax, vector<double>(3));
-	vector<double> Tty(jmax);		// Ttilda in vector form for each column
-	vector<vector<double>> deltaT(imax);
-	double ay = dt / (Re*Pr*pow(dy, 2));
-	double by = dt / (2 * dy);
-
-	for (int i = 1; i < imax -1; i++)
-	{
 		for (int j = 1; j < jmax - 1; j++)
 		{
-			DY[j][0] = -by * v[j-1][i] - ay;
+			for (int i = 1; i < imax - 1; i++)
+			{
+				DX[i][0] = -bx * u[j][i-1] - ax;
 
-			DY[j][1] = 1 + 2 * ay;
+				DX[i][1] = 1 + 2 * ax;
 
-			DY[j][2] = by * v[j+1][i] - ay;
+				DX[i][2] = bx * u[j][i+1] - ax;
 
-			Tty[j] = Ttilda[j][i];
+				FIx[i] = dt * FI[j][i];
+			}
+
+			DX[0][0] = 1;
+			DX[0][1] = 1;
+			DX[imax-1][1] = 1;
+			DX[imax-1][2] = -1;
+
+			FIx[0] = 0;
+			FIx[imax-1] = 0;
+
+			SolveThomas(DX, FIx, imax);
+			Ttilda[j] = FIx;
 		}
+		// printVec2D(Ttilda);
 
-		DY[0][1] = 1;
-		DY[0][2] = 1;
-		DY[jmax-1][1] = 1;
-		DY[jmax-1][0] = -1;
+		// Matrix {[I] + dt*[Dy]}
+		vector<vector<double>> DY(jmax, vector<double>(3));
+		vector<double> Tty(jmax);		// Ttilda in vector form for each column
+		vector<vector<double>> deltaT(imax);
+		double ay = dt / (Re*Pr*pow(dy, 2));
+		double by = dt / (2 * dy);
 
-		Tty[0] = 0;
-		Tty[jmax-1] = 0;
+		for (int i = 1; i < imax -1; i++)
+		{
+			for (int j = 1; j < jmax - 1; j++)
+			{
+				DY[j][0] = -by * v[j-1][i] - ay;
 
-		SolveThomas(DY, Tty, jmax);
-		deltaT[i] = Tty;
-	}
-	printVec2D(deltaT);
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Need to figure out how to print Ttilda and deltaT
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	
+				DY[j][1] = 1 + 2 * ay;
 
+				DY[j][2] = by * v[j+1][i] - ay;
+
+				Tty[j] = Ttilda[j][i];
+			}
+
+			DY[0][0] = 1;
+			DY[0][1] = 1;
+			DY[jmax-1][1] = 1;
+			DY[jmax-1][2] = -1;
+
+			Tty[0] = 0;
+			Tty[jmax-1] = 0;
+
+			SolveThomas(DY, Tty, jmax);
+			deltaT[i] = Tty;
+		}
+		// printVec2D(deltaT);
+		
+		// transpose(deltaT);
+		// // vector<vector<double>> delT = transpose(deltaT);
+		// printVec2D(T);
+		for (int j = 1; j < jmax-1; j++)
+		{
+			for (int i = 1; i < imax-1; i++)
+			{
+				T[j][i] += deltaT[i][j];
+			}
+		}
+		setBound(T, u, v);
+	// }
+	printVec2D(T);	
 }
 
 
