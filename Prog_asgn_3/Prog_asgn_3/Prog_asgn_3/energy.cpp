@@ -134,7 +134,6 @@ void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 {
 	init(T, u, v);
 	vector<vector<double>> S = source(u, v);		// Constant
-
 	vector<vector<double>> FI = FI2C(T, u, v, S);	// Only changes on every time loop
 
 
@@ -149,11 +148,11 @@ void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 	{
 		for (int i = 1; i < imax - 1; i++)
 		{
-			DX[i][0] = -bx * u[i][i-1] - ax;
+			DX[i][0] = -bx * u[j][i-1] - ax;
 
 			DX[i][1] = 1 + 2 * ax;
 
-			DX[i][2] = bx * u[i][i+1] - ax;
+			DX[i][2] = bx * u[j][i+1] - ax;
 
 			FIx[i] = dt * FI[j][i];
 		}
@@ -174,7 +173,7 @@ void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 	// Matrix {[I] + dt*[Dy]}
 	vector<vector<double>> DY(jmax, vector<double>(3));
 	vector<double> Tty(jmax);		// Ttilda in vector form for each column
-	vector<vector<double>> deltaT(jmax);
+	vector<vector<double>> deltaT(imax);
 	double ay = dt / (Re*Pr*pow(dy, 2));
 	double by = dt / (2 * dy);
 
@@ -182,11 +181,11 @@ void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 	{
 		for (int j = 1; j < jmax - 1; j++)
 		{
-			DY[j][0] = -by * v[j][j-1] - ay;
+			DY[j][0] = -by * v[j-1][i] - ay;
 
 			DY[j][1] = 1 + 2 * ay;
 
-			DY[j][2] = by * v[j][j+1] - ay;
+			DY[j][2] = by * v[j+1][i] - ay;
 
 			Tty[j] = Ttilda[j][i];
 		}

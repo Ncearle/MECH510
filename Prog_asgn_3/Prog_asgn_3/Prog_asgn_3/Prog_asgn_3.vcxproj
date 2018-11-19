@@ -115,12 +115,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\thomas.c" />
-    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="energy.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="constant.h" />
     <ClInclude Include="error_fcns.h" />
+    <ClInclude Include="exact.h" />
     <ClInclude Include="print_fcns.h" />
+    <ClInclude Include="thomas.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

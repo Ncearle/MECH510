@@ -1,3 +1,6 @@
-﻿  Source.cpp
-c:\users\nick\documents\school\ubc\grad\classes\mech510\prog_asgn_3\prog_asgn_3\prog_asgn_3\source.cpp(23): warning C4244: 'initializing': conversion from 'double' to 'const int', possible loss of data
+﻿  energy.cpp
+c:\users\nick\documents\school\ubc\grad\classes\mech510\prog_asgn_3\prog_asgn_3\prog_asgn_3\constant.h(34): warning C4244: 'initializing': conversion from 'double' to 'const int', possible loss of data
+c:\users\nick\documents\school\ubc\grad\classes\mech510\prog_asgn_3\prog_asgn_3\prog_asgn_3\print_fcns.h(18): warning C4018: '<': signed/unsigned mismatch
+c:\users\nick\documents\school\ubc\grad\classes\mech510\prog_asgn_3\prog_asgn_3\prog_asgn_3\print_fcns.h(29): warning C4018: '<': signed/unsigned mismatch
+c:\users\nick\documents\school\ubc\grad\classes\mech510\prog_asgn_3\prog_asgn_3\prog_asgn_3\print_fcns.h(45): warning C4018: '<': signed/unsigned mismatch
   Prog_asgn_3.vcxproj -> C:\Users\Nick\Documents\School\UBC\Grad\Classes\MECH510\Prog_asgn_3\Prog_asgn_3\Debug\Prog_asgn_3.exe

@@ -24,7 +24,7 @@ void printVec(vector<double> vec)
 
 void printVec2D(vector<vector<double>> vec) 
 {
-	for (int j = vec.size() - 1; j > -1; j--)
+	for (int j = vec.size() - 1; j > 0; j--)
 	{
 		for (int i = 0; i < vec[j].size(); i++)
 		{
