@@ -12,12 +12,13 @@
 #include <fstream>
 #include <vector>
 #include <iomanip>
+#include <ctime>
 
 using namespace std;
 
 // Domain Constants
-extern constexpr int imax = 27;
-extern constexpr int jmax = 12;
+extern constexpr int imax = 102;
+extern constexpr int jmax = 42;
 
 extern constexpr double xmax = 5;
 extern constexpr double ymax = 1;
@@ -28,10 +29,7 @@ extern constexpr int ubar = 3;		// average velocity in x [m/s]
 // extern constexpr double CFL = 0.001;	// CFL 80% of maximum for RK2
 // extern constexpr double dt = CFL * dx / ubar;	//Time step
 
-extern constexpr double dt = 0.05;
-
-extern constexpr double tend = 1.0;
-extern constexpr int tmax = tend / dt + 1; //Adding 1 to counter the loss when converting to int
+extern constexpr double dt = 0.004;
 
 // Constants
 extern constexpr double pi = M_PI;	// Pi

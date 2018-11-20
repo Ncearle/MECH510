@@ -81,32 +81,46 @@ void EE(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<doub
 {
 	init(T, u, v);
 	vector<vector<double>> S = source(u, v);
-	printVec2D(T);
-	for (int n = 1; n < tmax; n++)
+	vector<vector<double>> T0(jmax, vector<double>(imax));
+	int it = 0;
+	double delta = 1.0;
+	while (abs(delta) > pow(10, -5))
 	{
-		double t = n * dt;
+		it++;
 		vector<vector<double>> FI = FI2C(T, u, v, S);
 		for (int j = 1; j < jmax-1; j++)
 		{
 			for (int i = 1; i < imax-1; i++)
 			{
+				T0[j][i] = T[j][i];
 				T[j][i] = T[j][i] + dt * FI[j][i];
 			}
 		}
 		ghost(T, u, v);
-		// printVec2D(T);
+
+		delta = maxChange(T0, T);
 	}
+	// printVec2D(T);
+	// 
+	vector<vector<double>> ExT = exactTemp();
+	vector<vector<double>> err = error(T, ExT);
+	double L2 = L2Norm(err);
+
+	cout << "Domain: " << imax-2 << " X " << jmax-2 << endl;
+	cout << setprecision(6) << "L2 norm: " << L2 << endl;
+	cout << "Iterations: " << it << endl; 
 }
 
 void RK2(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<double>> &v)
 {
 	init(T, u, v);
 	vector<vector<double>> S = source(u, v);
-	printVec2D(T);
-	for (int n = 1; n < 100; n++)
+	vector<vector<double>> T0(jmax, vector<double>(imax));
+	int it = 0;
+	double delta = 1.0;
+	while (abs(delta) > pow(10, -5))
 	{
-		double t = n * dt;
-
+		it++;
 		// Intermediate Step
 		vector<vector<double>> FIint = FI2C(T, u, v, S);
 		vector<vector<double>> Tint(jmax, vector<double>(imax));
@@ -114,6 +128,7 @@ void RK2(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 		{
 			for (int i = 1; i < imax-1; i++)
 			{
+				T0[j][i] = T[j][i];
 				Tint[j][i] = T[j][i] + dt/2.0 * FIint[j][i];
 			}
 		}
@@ -129,7 +144,16 @@ void RK2(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 			}
 		}
 		ghost(T, u, v);
+
+		delta = maxChange(T0, T);
 	}
+	// printVec2D(T);
+	cout << setprecision(6) << delta << endl;
+	vector<vector<double>> ExT = exactTemp();
+	vector<vector<double>> err = error(T, ExT);
+	double L2 = L2Norm(err);
+	cout << setprecision(6) << "L2 norm: " << L2 << endl;
+	cout << "Iterations: " << it << endl; 
 }
 
 void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<double>> &v)
@@ -138,11 +162,13 @@ void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 	init(T, u, v);
 	printVec2D(T);
 	vector<vector<double>> S = source(u, v);		// Constant
-
-	 /*or (int n = 1; n < 100; n++)
-	 {*/
+	vector<vector<double>> T0(jmax, vector<double>(imax));
+	int it = 0;
+	double delta = 1.0;
+	while (abs(delta) > pow(10, -5))
+	{
+		it++;
 		vector<vector<double>> FI = FI2C(T, u, v, S);	// Only changes on every time loop
-		printVec2D(FI);
 
 		// Matrix {[I] + dt*[Dx]}
 		vector<vector<double>> DX(imax, vector<double>(3));
@@ -155,6 +181,8 @@ void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 		{
 			for (int i = 1; i < imax - 1; i++)
 			{
+				T0[j][i] = T[j][i];
+
 				DX[i][0] = -bx * u[j][i-1] - ax;
 
 				DX[i][1] = 1 + 2 * ax;
@@ -219,9 +247,18 @@ void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 			}
 		}
 		ghost(T, u, v);
+
+		delta = maxChange(T0, T);
 		
-	//}
-	 printVec2D(T);
+	}
+	printVec2D(T);
+
+	vector<vector<double>> ExT = exactTemp();
+	cout << setprecision(6) << delta << endl;
+	vector<vector<double>> err = error(T, ExT);
+	double L2 = L2Norm(err);
+	cout << setprecision(6) << "L2 norm: " << L2 << endl;
+	cout << "Iterations: " << it << endl; 
 }
 
 
@@ -231,24 +268,27 @@ int main()
 	vector<vector<double>> T(jmax, vector<double>(imax));
 	vector<vector<double>> u(jmax, vector<double>(imax));
 	vector<vector<double>> v(jmax, vector<double>(imax));
-	vector<vector<double>> S = source(u, v);
+	
+
 
 	//init(T, u, v);
 
 	//vector<vector<double>> FI = FI2C(T, u, v, S);
 	//printVec2D(FI);
 
-	//Imp(T, u, v);
+	int start_s=clock();
+	// Imp(T, u, v);
+
+	// RK2(T, u, v);
+
+	EE(T, u, v);
+	int stop_s=clock();
+	cout << "time [sec]: " << (stop_s-start_s)/double(CLOCKS_PER_SEC) << endl;
 
 
-	// init(T, u, v);
-	// ghost(T, u, v);
-	// printVec2D(T);
+	// the code you wish to time goes here
 
-	RK2(T, u, v);
-	printVec2D(T);
-	// EE(T, u, v);
-	// printVec2D(T);
+
 
 	// vec2File("T.dat",T);
 
@@ -273,6 +313,9 @@ int main()
 
 	// double L2FE = L2Norm(FE);
 	// double L2SE = L2Norm(SE);
+
+	
+
 
 
 	getchar();

@@ -9,6 +9,7 @@
 #include "constant.h"
 
 vector<vector<double>> error(vector<vector<double>> num, vector<vector<double>> exact); 	// Standard error
+double maxChange(vector<vector<double>> prev, vector<vector<double>> curr);	// Maxximum change between the previous and current timestep
 double L2Norm(vector<vector<double>> error);					// L2 Norm of the error
 double L1Norm(vector<vector<double>> error);					// L1 Norm of the error
 double Linf(vector<vector<double>> error);					// L infinite Norm of the error
@@ -24,6 +25,25 @@ vector<vector<double>> error(vector<vector<double>> num, vector<vector<double>> 
 		}
 	}
 	return err;
+}
+
+// Calculates the maximum change of all cells between iterations given the change matrix
+double maxChange(vector<vector<double>> prev, vector<vector<double>> curr) 
+{			
+
+	double maxChange = 0;
+	vector<vector<double>> delta(jmax, vector<double>(imax));
+	for (int j = 1; j < jmax - 1; j++)
+	{
+		for (int i = 1; i < imax - 1; i++)
+		{
+			delta[j][i] = prev[j][i] - curr[j][i];
+			if (abs(delta[j][i]) > maxChange) {
+				maxChange = delta[j][i];
+			}
+		}
+	}
+	return maxChange;
 }
 
 double L2Norm(vector<vector<double>> error) 
