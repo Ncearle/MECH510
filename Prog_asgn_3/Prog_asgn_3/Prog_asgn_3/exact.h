@@ -1,5 +1,5 @@
 //==================================================
-// Header file containing constants and includes
+// Header file containing exact solution functions
 //==================================================
 #pragma once
 #ifndef HEADER_FILE

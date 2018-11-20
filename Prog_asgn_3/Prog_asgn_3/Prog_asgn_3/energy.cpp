@@ -84,7 +84,7 @@ void EE(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<doub
 	vector<vector<double>> T0(jmax, vector<double>(imax));
 	int it = 0;
 	double delta = 1.0;
-	while (abs(delta) > pow(10, -5))
+	while (abs(delta) > tol)
 	{
 		it++;
 		vector<vector<double>> FI = FI2C(T, u, v, S);
@@ -109,6 +109,7 @@ void EE(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<doub
 	cout << "Domain: " << imax-2 << " X " << jmax-2 << endl;
 	cout << setprecision(6) << "L2 norm: " << L2 << endl;
 	cout << "Iterations: " << it << endl; 
+	cout << "Timestep: " << dt << endl;
 }
 
 void RK2(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<double>> &v)
@@ -118,7 +119,7 @@ void RK2(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 	vector<vector<double>> T0(jmax, vector<double>(imax));
 	int it = 0;
 	double delta = 1.0;
-	while (abs(delta) > pow(10, -5))
+	while (abs(delta) > tol)
 	{
 		it++;
 		// Intermediate Step
@@ -154,18 +155,19 @@ void RK2(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 	double L2 = L2Norm(err);
 	cout << setprecision(6) << "L2 norm: " << L2 << endl;
 	cout << "Iterations: " << it << endl; 
+	cout << "Timestep: " << dt << endl;
+	cout << "Tolerance: " << tol << endl;
 }
 
 void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<double>> &v)
 {
-	double dt = 0.1;
 	init(T, u, v);
-	printVec2D(T);
+	// printVec2D(T);
 	vector<vector<double>> S = source(u, v);		// Constant
 	vector<vector<double>> T0(jmax, vector<double>(imax));
 	int it = 0;
 	double delta = 1.0;
-	while (abs(delta) > pow(10, -5))
+	while (abs(delta) > tol)
 	{
 		it++;
 		vector<vector<double>> FI = FI2C(T, u, v, S);	// Only changes on every time loop
@@ -182,13 +184,9 @@ void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 			for (int i = 1; i < imax - 1; i++)
 			{
 				T0[j][i] = T[j][i];
-
 				DX[i][0] = -bx * u[j][i-1] - ax;
-
 				DX[i][1] = 1 + 2 * ax;
-
 				DX[i][2] = bx * u[j][i+1] - ax;
-
 				FIx[i] = dt * FI[j][i];
 			}
 
@@ -203,7 +201,6 @@ void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 			SolveThomas(DX, FIx, imax);
 			Ttilda[j] = FIx;
 		}
-		//printVec2D(Ttilda);
 
 		// Matrix {[I] + dt*[Dy]}
 		vector<vector<double>> DY(jmax, vector<double>(3));
@@ -217,11 +214,8 @@ void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 			for (int j = 1; j < jmax - 1; j++)
 			{
 				DY[j][0] = -by * v[j-1][i] - ay;
-
 				DY[j][1] = 1 + 2 * ay;
-
 				DY[j][2] = by * v[j+1][i] - ay;
-
 				Tty[j] = Ttilda[j][i];
 			}
 
@@ -249,19 +243,16 @@ void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 		ghost(T, u, v);
 
 		delta = maxChange(T0, T);
-		
 	}
-	printVec2D(T);
 
 	vector<vector<double>> ExT = exactTemp();
 	cout << setprecision(6) << delta << endl;
 	vector<vector<double>> err = error(T, ExT);
 	double L2 = L2Norm(err);
 	cout << setprecision(6) << "L2 norm: " << L2 << endl;
-	cout << "Iterations: " << it << endl; 
+	cout << "Iterations: " << it << endl;
+	cout << "Timestep: " << dt << endl;
 }
-
-
 
 int main()
 {
@@ -269,54 +260,20 @@ int main()
 	vector<vector<double>> u(jmax, vector<double>(imax));
 	vector<vector<double>> v(jmax, vector<double>(imax));
 	
-
-
-	//init(T, u, v);
-
-	//vector<vector<double>> FI = FI2C(T, u, v, S);
-	//printVec2D(FI);
-
 	int start_s=clock();
-	// Imp(T, u, v);
+	Imp(T, u, v);
 
 	// RK2(T, u, v);
 
-	EE(T, u, v);
+	// EE(T, u, v);
 	int stop_s=clock();
+	cout << "Domain size: " << (imax-2) << " X " << (jmax-2) << endl;
 	cout << "time [sec]: " << (stop_s-start_s)/double(CLOCKS_PER_SEC) << endl;
 
 
-	// the code you wish to time goes here
-
-
-
-	// vec2File("T.dat",T);
-
-	//vector<vector<double>> ExT = exactTemp();
-	// vector<vector<double>> TE = error(T, ExT);
-	// double L2TE = L2Norm(TE);
-
-	//printVec2D(ExT);
-	// printVec2D(TE);
-	// cout << L2TE;
-	
-	// vector<vector<double>> S = source(u, v);
-	// vector<vector<double>> ExS = exactSource();
-	// vector<vector<double>> ExFI = exactFlux();
-	// vector<vector<double>> FI = FI2C(T, u, v);
-
-	// vector<vector<double>> FE = error(FI, ExFI);
-	// vector<vector<double>> SE = error(S, ExS);
-
-	// printVec2D(FE);
-	// printVec2D(SE);
-
-	// double L2FE = L2Norm(FE);
-	// double L2SE = L2Norm(SE);
-
-	
-
-
+	string fname = "T_I_" + to_string(imax-2) + "x" + to_string(jmax-2) + ".dat";
+	cout << fname;
+	vec2File(fname,T);
 
 	getchar();
 	return 0;

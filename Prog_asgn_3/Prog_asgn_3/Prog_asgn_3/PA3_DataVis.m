@@ -3,6 +3,7 @@
 
 clear; clc; close all;
 
+%% Part 1, 2
 % 10 x 10 domain
 T_10 = importdata('T_10.dat');
 ErrFI_10 = importdata('ErrFI_10.dat');
@@ -64,3 +65,10 @@ shading interp;
 figure();
 surf(x80, y80, ErrFI_80);
 shading interp;
+
+
+
+%% Part 3-6
+
+
+

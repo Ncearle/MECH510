@@ -36,7 +36,7 @@ void printVec2D(vector<vector<double>> vec)
 }
 
 
-void vec2File(const char* fileName, vector<vector<double>> &vec) // Prints 2D vector to a file
+void vec2File(const string fileName, vector<vector<double>> &vec) // Prints 2D vector to a file
 {			
 	ofstream outfile;
 	outfile.open(fileName);
