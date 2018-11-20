@@ -28,7 +28,7 @@ extern constexpr int ubar = 3;		// average velocity in x [m/s]
 // extern constexpr double CFL = 0.001;	// CFL 80% of maximum for RK2
 // extern constexpr double dt = CFL * dx / ubar;	//Time step
 
-extern constexpr double dt = 0.0625;
+extern constexpr double dt = 0.05;
 
 extern constexpr double tend = 1.0;
 extern constexpr int tmax = tend / dt + 1; //Adding 1 to counter the loss when converting to int

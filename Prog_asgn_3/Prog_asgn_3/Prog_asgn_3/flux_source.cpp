@@ -111,11 +111,12 @@ int main()
 		}
 	}
 	
+	printVec2D(S);
 
-	printVec2D(FI_2);
-	printVec2D(T);
+	//printVec2D(FI_2);
+	//printVec2D(T);
 
-	printVec2D(TEx);
+	//printVec2D(TEx);
 
 	vector<vector<double>> TE = error(T, TEx);
 

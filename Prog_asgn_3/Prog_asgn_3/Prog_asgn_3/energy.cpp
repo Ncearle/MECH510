@@ -25,15 +25,15 @@ void ghost(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<d
 
 void init(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<double>> &v)
 {
-	for (int j = 1; j < jmax-1; j++)
+	for (int j = 0; j < jmax; j++)
 	{
 		double y = (j - 0.5) / (jmax - 2);
-		for (int i = 1; i < imax-1; i++)
+		for (int i = 0; i < imax; i++)
 		{
 			double x = (i - 0.5) / (imax - 2);
 
 			T[j][i] = y;
-			u[j][i] = 6*ubar*y*(1-y);
+			u[j][i] = 6.0*ubar*y*(1-y);
 			v[j][i] = 0;
 		}
 	}
@@ -47,7 +47,9 @@ vector<vector<double>> source(vector<vector<double>> &u, vector<vector<double>> 
 	{
 		for (int i = 1; i < imax-1; i++)
 		{
-			S[j][i] = Ec / Re * (2 * pow((u[j][i + 1] - u[j][i - 1]) / (2 * dx), 2) + 2 * pow((v[j + 1][i] - v[j - 1][i]) / (2 * dy), 2) + pow((v[j][i + 1] - v[j][i - 1]) / (2 * dx) + (u[j + 1][i] - u[j - 1][i]) / (2 * dy), 2));
+			S[j][i] = Ec / Re * (2 * pow((u[j][i + 1] - u[j][i - 1]) / (2 * dx), 2) 
+								+ 2 * pow((v[j + 1][i] - v[j - 1][i]) / (2 * dy), 2) 
+								+ pow((v[j][i + 1] - v[j][i - 1]) / (2 * dx) + (u[j + 1][i] - u[j - 1][i]) / (2 * dy), 2));
 		}
 	}
 	return S;
@@ -59,17 +61,17 @@ vector<vector<double>> FI2C(vector<vector<double>> &T, vector<vector<double>> &u
 	vector<vector<double>> con(jmax, vector<double>(imax));
 	vector<vector<double>> dif(jmax, vector<double>(imax));
 
-	for (int j = 1; j < jmax - 1; j++)
+	for (int j = 1; j < jmax-1; j++)
 	{
-		for (int i = 1; i < imax - 1; i++)
+		for (int i = 1; i < imax-1; i++)
 		{
 			// Convective term
-			con[j][i] = -(u[j][i + 1] * T[j][i + 1] - u[j][i - 1] * T[j][i - 1]) / (2 * dx) - (v[j + 1][i] * T[j + 1][i] - v[j - 1][i] * T[j - 1][i]) / (2 * dx);
+			con[j][i] = -(u[j][i + 1] * T[j][i + 1] - u[j][i - 1] * T[j][i - 1]) / (2 * dx) - (v[j + 1][i] * T[j + 1][i] - v[j - 1][i] * T[j - 1][i]) / (2 * dy);
 
 			// Diffusive term
 			dif[j][i] = ((T[j][i + 1] - 2 * T[j][i] + T[j][i - 1]) / pow(dx, 2) + (T[j + 1][i] - 2 * T[j][i] + T[j - 1][i]) / pow(dy, 2)) / (Re * Pr);
 
-			FI[j][i] = -(con[j][i] + dif[j][i]) + S[j][i];
+			FI[j][i] = (con[j][i] + dif[j][i]) + S[j][i];
 		}
 	}
 	return FI;
@@ -101,7 +103,7 @@ void RK2(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 	init(T, u, v);
 	vector<vector<double>> S = source(u, v);
 	printVec2D(T);
-	for (int n = 1; n < tmax; n++)
+	for (int n = 1; n < 100; n++)
 	{
 		double t = n * dt;
 
@@ -137,9 +139,10 @@ void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 	printVec2D(T);
 	vector<vector<double>> S = source(u, v);		// Constant
 
-	// for (int n = 1; n < 3; n++)
-	// {
+	 /*or (int n = 1; n < 100; n++)
+	 {*/
 		vector<vector<double>> FI = FI2C(T, u, v, S);	// Only changes on every time loop
+		printVec2D(FI);
 
 		// Matrix {[I] + dt*[Dx]}
 		vector<vector<double>> DX(imax, vector<double>(3));
@@ -172,7 +175,7 @@ void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 			SolveThomas(DX, FIx, imax);
 			Ttilda[j] = FIx;
 		}
-		printVec2D(Ttilda);
+		//printVec2D(Ttilda);
 
 		// Matrix {[I] + dt*[Dy]}
 		vector<vector<double>> DY(jmax, vector<double>(3));
@@ -205,9 +208,9 @@ void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 			SolveThomas(DY, Tty, jmax);
 			deltaT[i] = Tty;
 		}
-		printVec2D(deltaT);
+		//printVec2D(deltaT);
 		
-		printVec2D(T);
+		//printVec2D(T);
 		for (int j = 1; j < jmax-1; j++)
 		{
 			for (int i = 1; i < imax-1; i++)
@@ -216,9 +219,9 @@ void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 			}
 		}
 		ghost(T, u, v);
-		printVec2D(T);	
-	// }
-	
+		
+	//}
+	 printVec2D(T);
 }
 
 
@@ -228,26 +231,32 @@ int main()
 	vector<vector<double>> T(jmax, vector<double>(imax));
 	vector<vector<double>> u(jmax, vector<double>(imax));
 	vector<vector<double>> v(jmax, vector<double>(imax));
+	vector<vector<double>> S = source(u, v);
 
-	Imp(T, u, v);
+	//init(T, u, v);
+
+	//vector<vector<double>> FI = FI2C(T, u, v, S);
+	//printVec2D(FI);
+
+	//Imp(T, u, v);
 
 
 	// init(T, u, v);
 	// ghost(T, u, v);
 	// printVec2D(T);
 
-	// RK2(T, u, v);
-	// printVec2D(T);
+	RK2(T, u, v);
+	printVec2D(T);
 	// EE(T, u, v);
 	// printVec2D(T);
 
 	// vec2File("T.dat",T);
 
-	vector<vector<double>> ExT = exactTemp();
+	//vector<vector<double>> ExT = exactTemp();
 	// vector<vector<double>> TE = error(T, ExT);
 	// double L2TE = L2Norm(TE);
 
-	printVec2D(ExT);
+	//printVec2D(ExT);
 	// printVec2D(TE);
 	// cout << L2TE;
 	
