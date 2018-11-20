@@ -7,7 +7,7 @@
 #include "exact.h"
 #include "thomas.h"
 
-void setBound(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<double>> &v)
+void ghost(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<double>> &v)
 {
 	for (int i = 1; i < imax-1; i++)
 	{
@@ -37,7 +37,7 @@ void init(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<do
 			v[j][i] = 0;
 		}
 	}
-	setBound(T, u, v);
+	ghost(T, u, v);
 }
 
 vector<vector<double>> source(vector<vector<double>> &u, vector<vector<double>> &v)
@@ -91,7 +91,7 @@ void EE(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<doub
 				T[j][i] = T[j][i] + dt * FI[j][i];
 			}
 		}
-		setBound(T, u, v);
+		ghost(T, u, v);
 		// printVec2D(T);
 	}
 }
@@ -115,7 +115,7 @@ void RK2(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 				Tint[j][i] = T[j][i] + dt/2.0 * FIint[j][i];
 			}
 		}
-		setBound(Tint, u, v);
+		ghost(Tint, u, v);
 
 		// Full Step
 		vector<vector<double>> FI = FI2C(Tint, u, v, S);
@@ -126,50 +126,18 @@ void RK2(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 				T[j][i] = T[j][i] + dt * FI[j][i];
 			}
 		}
-		setBound(T, u, v);
+		ghost(T, u, v);
 	}
 }
-
-// void transpose(vector<vector<double>> &vec)
-// {
-// 	vector<vector<double>> Tr(jmax, vector<double>(imax));
-// 	vector<vector<double>> temp(imax);
-// 	for (int i = 0; i < 12; i++)
-// 	{
-// 		for (int j = 0; j < 27; j++)
-// 		{
-// 			temp[j] = vec[j][i];
-// 		}
-// 		Tr[i] = temp;
-// 	}
-// 	vec = Tr;
-// }
-
-// void transpose(vector<vector<double> > &b)
-// {
-//     if (b.size() == 0)
-//         return;
-
-//     vector<vector<double> > trans_vec(b[1].size(), vector<double>());
-
-//     for (int i = 0; i < b.size(); i++)
-//     {
-//         for (int j = 0; j < b[i].size(); j++)
-//         {
-//             trans_vec[j].push_back(b[i][j]);
-//         }
-//     }
-
-//     b = trans_vec;    // <--- reassign here
-// }
 
 void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<double>> &v)
 {
 	double dt = 0.1;
 	init(T, u, v);
+	printVec2D(T);
 	vector<vector<double>> S = source(u, v);		// Constant
 
-	// for (int n = 1; n < 101; n++)
+	// for (int n = 1; n < 3; n++)
 	// {
 		vector<vector<double>> FI = FI2C(T, u, v, S);	// Only changes on every time loop
 
@@ -204,7 +172,7 @@ void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 			SolveThomas(DX, FIx, imax);
 			Ttilda[j] = FIx;
 		}
-		// printVec2D(Ttilda);
+		printVec2D(Ttilda);
 
 		// Matrix {[I] + dt*[Dy]}
 		vector<vector<double>> DY(jmax, vector<double>(3));
@@ -237,11 +205,9 @@ void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 			SolveThomas(DY, Tty, jmax);
 			deltaT[i] = Tty;
 		}
-		// printVec2D(deltaT);
+		printVec2D(deltaT);
 		
-		// transpose(deltaT);
-		// // vector<vector<double>> delT = transpose(deltaT);
-		// printVec2D(T);
+		printVec2D(T);
 		for (int j = 1; j < jmax-1; j++)
 		{
 			for (int i = 1; i < imax-1; i++)
@@ -249,9 +215,10 @@ void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 				T[j][i] += deltaT[i][j];
 			}
 		}
-		setBound(T, u, v);
+		ghost(T, u, v);
+		printVec2D(T);	
 	// }
-	printVec2D(T);	
+	
 }
 
 
@@ -266,7 +233,7 @@ int main()
 
 
 	// init(T, u, v);
-	// setBound(T, u, v);
+	// ghost(T, u, v);
 	// printVec2D(T);
 
 	// RK2(T, u, v);
@@ -276,11 +243,11 @@ int main()
 
 	// vec2File("T.dat",T);
 
-	// vector<vector<double>> ExT = exactTemp();
+	vector<vector<double>> ExT = exactTemp();
 	// vector<vector<double>> TE = error(T, ExT);
 	// double L2TE = L2Norm(TE);
 
-	// printVec2D(ExT);
+	printVec2D(ExT);
 	// printVec2D(TE);
 	// cout << L2TE;
 	
