@@ -11,7 +11,8 @@
 
 void printVec(vector<double> vec);		// Prints a vector to the console
 void printVec2D(vector<vector<double>> vec);		// Prints a 2D vector to the console
-void vec2File(const char* fileName, vector<vector<double>> &vec); // Prints a 2D vector to a file
+void vec2D2File(const char* fileName, vector<vector<double>> &vec); // Prints a 2D vector to a file
+void vec1D2File(const string fileName, vector<double> &vec); // Prints 1D vector to a file
 
 void printVec(vector<double> vec) 
 {
@@ -36,7 +37,7 @@ void printVec2D(vector<vector<double>> vec)
 }
 
 
-void vec2File(const string fileName, vector<vector<double>> &vec) // Prints 2D vector to a file
+void vec2D2File(const string fileName, vector<vector<double>> &vec) // Prints 2D vector to a file
 {			
 	ofstream outfile;
 	outfile.open(fileName);
@@ -47,6 +48,18 @@ void vec2File(const string fileName, vector<vector<double>> &vec) // Prints 2D v
 			outfile << vec[j][i] << " ";		// Separated by a space for .dat files
 		}
 		outfile << endl;
+	}
+	outfile << endl;
+	outfile.close();
+}
+
+void vec1D2File(const string fileName, vector<double> &vec) // Prints 1D vector to a file
+{
+	ofstream outfile;
+	outfile.open(fileName);
+	for (int i = 0; i < vec.size(); i++)
+	{
+		outfile << vec[i] << " ";	// Separated by a space for .dat files
 	}
 	outfile << endl;
 	outfile.close();

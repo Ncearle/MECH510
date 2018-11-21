@@ -66,8 +66,6 @@ figure();
 surf(x80, y80, ErrFI_80);
 shading interp;
 
-
-
 %% Part 3-6
 
 
