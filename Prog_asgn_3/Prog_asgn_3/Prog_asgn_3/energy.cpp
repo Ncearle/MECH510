@@ -17,8 +17,8 @@ void ghost(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<d
 	for (int j = 1; j < jmax-1; j++)
 	{
 		double y = (j - 0.5) / (jmax - 2);
-		T[j][0] = 2*(y + 0.75*Pr*Ec*pow(ubar, 2)*(1 - pow((1 - 2*y), 4))) - T[j][1];
-		// T[j][0] = y;
+		// T[j][0] = 2*(y + 0.75*Pr*Ec*pow(ubar, 2)*(1 - pow((1 - 2*y), 4))) - T[j][1];
+		T[j][0] = y;
 		// T[j][imax-1] = 2*(y + 0.75*Pr*Ec*pow(ubar, 2)*(1 - pow((1 - 2*y), 4))) - T[j][imax-2];
 		T[j][imax-1] = T[j][imax-2];
 	}
@@ -261,7 +261,7 @@ vector<double> grad(vector<vector<double>> &T)//, double y)
 	// int j = y * (jmax-2);
 	for (int i = 1; i < imax-1; i++)
 	{
-		grad[i-1] = (T[0][i] - T[1][i])/dy;
+		grad[i-1] = (T[1][i] - T[0][i])/dy;
 	}
 	return grad;
 }
@@ -283,15 +283,15 @@ int main()
 	cout << "time [sec]: " << (stop_s-start_s)/double(CLOCKS_PER_SEC) << endl;
 
 
-	// string Tname = "T_dev_" + to_string(imax-2) + "x" + to_string(jmax-2) + ".dat";
-	// cout << Tname << endl;
-	// vec2D2File(Tname,T);
+	string Tname = "T_dev_" + to_string(imax-2) + "x" + to_string(jmax-2) + ".dat";
+	cout << Tname << endl;
+	vec2D2File(Tname,T);
 
-	// int x = xmax;
-	// string Gname = "G_dev_x" + to_string(x) + "_" + to_string(imax-2) + ".dat";
-	// cout << Gname << endl;
-	// vector<double> G = grad(T);
-	// vec1D2File(Gname, G);
+	int x = xmax;
+	string Gname = "G_dev_x" + to_string(x) + "_" + to_string(imax-2) + ".dat";
+	cout << Gname << endl;
+	vector<double> G = grad(T);
+	vec1D2File(Gname, G);
 
 	// printVec(G);
 
