@@ -75,23 +75,14 @@ colorbar;
 title('Source Error (80 x 80 mesh)');
 xlabel('x'); ylabel('y'); zlabel('T');
 
+figure();
+imagesc(flipud(ErrFi_80));
+colorbar;
+set(gca, 'YDir', 'normal');
+
 
 
 %% Part 3-6
-
-figure();
-imagesc(flipud(ErrFI_80));
-colorbar;
-set(gca, 'YDir', 'normal');
-title('Flux Integral Error (80 x 80 mesh)');
-xlabel('Cells [x]'); ylabel('Cells [y]');
-
-figure();
-imagesc(flipud(ErrS_80));
-colorbar;
-set(gca, 'YDir', 'normal');
-title('Source Error (80 x 80 mesh)');
-xlabel('Cells [x]'); ylabel('Cells [y]');
 
 
 

@@ -77,7 +77,7 @@ plot(0.05*real(Lx), 0.05*imag(Lx));
 xlabel('Real \lambda\Deltat');
 ylabel('Imag \lambda\Deltat');
 title('Maximum stable time step for energy equation with RK2 in x');
-legend('RK4 Stability','\Deltat = 0.07','\Deltat = 0.065','\Deltat = 0.0625','\Deltat = 0.06','\Deltat = 0.05');
+legend('RK2 Stability','\Deltat = 0.07','\Deltat = 0.065','\Deltat = 0.0625','\Deltat = 0.06','\Deltat = 0.05');
 grid on;
 
 %% Max time step for RK2 in Y
@@ -92,5 +92,5 @@ plot(0.15*real(Ly), 0.15*imag(Ly));
 xlabel('Real \lambda\Deltat');
 ylabel('Imag \lambda\Deltat');
 title('Maximum stable time step for energy equation with RK2 in y');
-legend('RK4 Stability','\Deltat = 0.2','\Deltat = 0.175','\Deltat = 0.15');
+legend('RK2 Stability','\Deltat = 0.2','\Deltat = 0.175','\Deltat = 0.15');
 grid on;
