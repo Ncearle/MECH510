@@ -18,11 +18,11 @@
 using namespace std;
 
 // Domain Constants
-extern constexpr int imax = 802;
-extern constexpr int jmax = 42;
+extern constexpr int imax = 1002;
+extern constexpr int jmax = 22;
 
-extern constexpr double xmax = 200;
-extern constexpr double ymax = 2;
+extern constexpr double xmax = 400;
+extern constexpr double ymax = 1;
 extern constexpr double dx = xmax / (imax - 2);
 extern constexpr double dy = ymax / (jmax - 2);
 
@@ -34,7 +34,7 @@ extern constexpr double tol = pow(10, -9); // Tolerance for max change, "nano"
 
 // Constants
 extern constexpr double pi = M_PI;	// Pi
-extern constexpr int Re = 50;		// Reynolds number
+extern constexpr int Re = 200;		// Reynolds number
 extern constexpr double Pr = 0.7;	// Prandtl number
 extern constexpr double Ec = 0.1;	// Eckert number
 
