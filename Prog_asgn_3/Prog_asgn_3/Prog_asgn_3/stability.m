@@ -8,7 +8,7 @@ Re = 50;    % Reynolds number
 Pr = 0.7;   % Prandtl number
 dx = 0.2;   % length of x cells
 dy = 0.1;   % height of y cells
-u = 3;      % value of ubar
+u = 4.5;      % value of ubar
 v = 0;      % value of v
 
 %% Second order centred scheme for energy equation
@@ -79,6 +79,7 @@ ylabel('Imag \lambda\Deltat');
 title('Maximum stable time step for energy equation with RK2 in x');
 legend('RK2 Stability','\Deltat = 0.07','\Deltat = 0.065','\Deltat = 0.0625','\Deltat = 0.06','\Deltat = 0.05');
 grid on;
+axis([-1 0 0 1]);
 
 %% Max time step for RK2 in Y
 figure()

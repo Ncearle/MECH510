@@ -18,19 +18,17 @@
 using namespace std;
 
 // Domain Constants
-extern constexpr int imax = 52;
-extern constexpr int jmax = 22;
+extern constexpr int imax = 802;
+extern constexpr int jmax = 42;
 
-extern constexpr double xmax = 5;
-extern constexpr double ymax = 1;
+extern constexpr double xmax = 200;
+extern constexpr double ymax = 2;
 extern constexpr double dx = xmax / (imax - 2);
 extern constexpr double dy = ymax / (jmax - 2);
 
 extern constexpr int ubar = 3;		// average velocity in x [m/s]
-// extern constexpr double CFL = 0.1 * 0.8;	// CFL 80% of maximum for RK2 ()
-// extern constexpr double dt = CFL * dx / ubar;	//Time step
 
-extern constexpr double dt = 1000;
+extern constexpr double dt = 0.05;
 
 extern constexpr double tol = pow(10, -9); // Tolerance for max change, "nano"
 
