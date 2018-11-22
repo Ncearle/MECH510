@@ -288,7 +288,7 @@ int main()
 	vec2D2File(Tname,T);
 
 	int x = xmax;
-	string Gname = "G_dev_x" + to_string(x) + "_" + to_string(imax-2) + "_140.dat";
+	string Gname = "G_dev_x" + to_string(x) + "_" + to_string(imax-2) + ".dat";
 	cout << Gname << endl;
 	vector<double> G = grad(T);
 	vec1D2File(Gname, G);
