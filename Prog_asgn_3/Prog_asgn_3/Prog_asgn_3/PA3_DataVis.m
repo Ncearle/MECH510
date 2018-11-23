@@ -75,61 +75,66 @@ colorbar;
 title('Source Error (80 x 80 mesh)');
 xlabel('x'); ylabel('y'); zlabel('T');
 
-
-
-<<<<<<< HEAD
-%% Part 3-6
-
-figure();
-imagesc(flipud(ErrFI_80));
-colorbar;
-set(gca, 'YDir', 'normal');
-title('Flux Integral Error (80 x 80 mesh)');
-xlabel('Cells [x]'); ylabel('Cells [y]');
-
-figure();
-imagesc(flipud(ErrS_80));
-colorbar;
-set(gca, 'YDir', 'normal');
-title('Source Error (80 x 80 mesh)');
-xlabel('Cells [x]'); ylabel('Cells [y]');
-
-
-||||||| merged common ancestors
-%% Part 3-6
-
-
-=======
 %% Part 7
 
+figure(3);
 G1 = load('Grad_x100_w1.dat');
 d1 = diff(G1);
 l1 = find(d1 < 1e-4, 1);
 x1 = l1/length(G1)*100;
+plot(G1);
+title('\DeltaT_{y0} for W = 1; X_{max} = 100');
+xlabel('Cells x');
+ylabel('\DeltaT');
 
+figure(2);
 G05 = load('Grad_x50_w0.dat');
 d05 = diff(G05);
 l05 = find(d05 < 1e-4/0.5, 1);
 x05 = l05/length(G05)*50;
+plot(G05);
+title('\DeltaT_{y0} for W = 0.5; X_{max} = 50');
+xlabel('Cells x');
+ylabel('\DeltaT');
 
+figure(1);
 G025 = load('Grad_x25_w025.dat');
 d025 = diff(G025);
 l025 = find(d025 < 1e-4/0.25, 1);
 x025 = l025/length(G025)*25;
+plot(G025);
+title('\DeltaT_{y0} for W = 0.25; X_{max} = 25');
+xlabel('Cells x');
+ylabel('\DeltaT');
 
+figure(4);
 G2 = load('Grad_x200_w2.dat');
 d2 = diff(G2);
 l2 = find(d2 < 1e-4/2, 1);
 x2 = l2/length(G2)*200;
+plot(G2);
+title('\DeltaT_{y0} for W = 2; X_{max} = 200');
+xlabel('Cells x');
+ylabel('\DeltaT');
 
+figure(5);
 G4 = load('Grad_x600_w4.dat');
 d4 = diff(G4);
 l4 = find(d4 < 1e-4/4, 1);
 x4 = l4/length(G4)*600;
+plot(G4);
+title('\DeltaT_{y0} for W = 4; X_{max} = 600');
+xlabel('Cells x');
+ylabel('\DeltaT');
 
+figure(6);
 G8 = load('Grad_x1200_w8.dat');
 d8 = diff(G8);
 l8 = find(d8 < 1e-4/8, 1);
 x8 = l8/length(G8)*1200;
->>>>>>> c92f1b558b475843bf3e48fd10896b589ccc819e
+plot(G8);
+title('\DeltaT_{y0} for W = 8; X_{max} = 1200');
+xlabel('Cells x');
+ylabel('\DeltaT');
+
 
