@@ -1,5 +1,5 @@
 //=================================================
-// Source file
+// Source file for Energy Equation
 //=================================================
 #include "constant.h"
 #include "print_fcns.h"
@@ -7,6 +7,7 @@
 #include "exact.h"
 #include "thomas.h"
 
+// Given domain and velocities, sets and updates the bounary conditions
 void ghost(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<double>> &v)
 {
 	for (int i = 1; i < imax-1; i++)
@@ -24,6 +25,7 @@ void ghost(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<d
 	}
 }
 
+// Initializes the domain and velocities
 void init(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<double>> &v)
 {
 	for (int j = 0; j < jmax; j++)
@@ -41,6 +43,7 @@ void init(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<do
 	ghost(T, u, v);
 }
 
+// Calculates the source term, given velocities
 vector<vector<double>> source(vector<vector<double>> &u, vector<vector<double>> &v)
 {
 	vector<vector<double>> S(jmax, vector<double>(imax));
@@ -56,6 +59,7 @@ vector<vector<double>> source(vector<vector<double>> &u, vector<vector<double>> 
 	return S;
 }
 
+// Calculates the flux integral given the domain, velocities, and source term
 vector<vector<double>> FI2C(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<double>> &v, vector<vector<double>> &S)
 {
 	vector<vector<double>> FI(jmax, vector<double>(imax));
@@ -78,6 +82,7 @@ vector<vector<double>> FI2C(vector<vector<double>> &T, vector<vector<double>> &u
 	return FI;
 }
 
+// Explicit Euler Time advance
 void EE(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<double>> &v)
 {
 	init(T, u, v);
@@ -113,6 +118,7 @@ void EE(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<doub
 	cout << "Timestep: " << dt << endl;
 }
 
+// Two Stage Runge Kutta time advance
 void RK2(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<double>> &v)
 {
 	init(T, u, v);
@@ -160,6 +166,7 @@ void RK2(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 	cout << "Tolerance: " << tol << endl;
 }
 
+// Implicit Euler time advance
 void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<double>> &v)
 {
 	init(T, u, v);
@@ -255,6 +262,7 @@ void Imp(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<dou
 	cout << "Timestep: " << dt << endl;
 }
 
+// Calculates the gradient between cells in the y direction
 vector<double> grad(vector<vector<double>> &T)//, double y)
 {
 	vector<double> grad(imax-2);
@@ -274,14 +282,11 @@ int main()
 	
 	int start_s=clock();
 	Imp(T, u, v);
-
 	// RK2(T, u, v);
-
 	// EE(T, u, v);
 	int stop_s=clock();
 	cout << "Domain size: " << (imax-2) << " X " << (jmax-2) << endl;
 	cout << "time [sec]: " << (stop_s-start_s)/double(CLOCKS_PER_SEC) << endl;
-
 
 	string Tname = "T_dev_" + to_string(imax-2) + "x" + to_string(jmax-2) + ".dat";
 	cout << Tname << endl;
