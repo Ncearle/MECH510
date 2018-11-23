@@ -1,6 +1,6 @@
-//=================================================
-// Flux and Source term verification
-//=================================================
+//====================================================
+// Flux and Source term verification for Parts 1 and 2
+//====================================================
 #include "constant.h"
 #include "print_fcns.h"
 #include "error_fcns.h"
