@@ -93,8 +93,8 @@ d4 = diff(G4);
 l4 = find(d4 < 1e-4/4, 1);
 x4 = l4/length(G4)*600;
 
-G8 = load('Grad_x1200_w8.dat');
+G8 = load('Grad_x1000_w8.dat');
 d8 = diff(G8);
 l8 = find(d8 < 1e-4/8, 1);
-x8 = l8/length(G8)*1200;
+x8 = l8/length(G8)*1000;
 
