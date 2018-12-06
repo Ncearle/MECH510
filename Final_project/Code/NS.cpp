@@ -96,7 +96,7 @@ vector<vector<vector<double>>> flux(vector<vector<vector<double>>> &U)
 	return flux;
 }
 
-vector<vector<double>> jac(vector<vector<vector<double>>> &U, string FG, int FGpm, int Upm, int i, int j)
+vector<vector<double>> jac(vector<vector<vector<double>>> &U, string FG, int FGpm, int Upm, int j, int i)
 {
 	vector<vector<double>> J(3, vector<double>(3));
 	if (FG == "F")
@@ -114,11 +114,60 @@ vector<vector<double>> jac(vector<vector<vector<double>>> &U, string FG, int FGp
 		J[1][1] = (U[j][i][2] + U[j+FGpm][i][2])/4 + Upm / (Re*dx);
 		J[1][2] = (U[j][i][1] + U[j+FGpm][i][1])/4;
 		J[2][0] = 1.0 / 2.0;
-		J[2][2] = (U[j][i][2] + U[j=FGpm][i][2])/2 + Upm / (Re*dx);
+		J[2][2] = (U[j][i][2] + U[j+FGpm][i][2])/2 + Upm / (Re*dx);
 	}
 	return J;
 }
 
+void Imp(vector<vector<vector<double>>> &U)
+{
+
+	vector<vector<vector<vector<double>>>> DX(imax, vector<vector<vector<double>>>(3, vector<vector<double>>(3, vector<double>(3))));
+
+	for (int j = 1; j < jmax-1; j++)
+	{
+		for (int i = 1; i < imax-1; i++)
+		{
+
+			vector<vector<double>> Ax = jac(U, "F", -1, -1, j, i);
+			vector<vector<double>> Bx(3, vector<double>(3));
+			vector<vector<double>> Bxp = jac(U, "F", 1, -1, j, i);
+			vector<vector<double>> Bxm = jac(U, "F", -1, 1, j, i);
+			vector<vector<double>> Cx = jac(U, "F", 1, 1, j, i);
+
+			vector<vector<double>> Ay = jac(U, "G", -1, -1, j, i);
+			vector<vector<double>> By(3, vector<double>(3));
+			vector<vector<double>> Byp = jac(U, "G", 1, -1, j, i);
+			vector<vector<double>> Bym = jac(U, "G", -1, 1, j, i);
+			vector<vector<double>> Cy = jac(U, "G", 1, 1, j, i);
+
+			for (int r = 0; r < 3; r++)
+			{
+				for (int c = 0; c < 3; c++)
+				{
+					Ax[r][c] = -dt * Ax[r][c];
+					Bx[r][c] = 1 + dt*(Bxp[r][c] - Bxm[r][c]);
+					Cx[r][c] = dt * Cx[r][c];
+
+					Ay[r][c] = -dt * Ay[r][c];
+					By[r][c] = 1 + dt*(Byp[r][c] - Bym[r][c]);
+					Cy[r][c] = dt * Cy[r][c];
+
+				}
+			}
+
+			DX[i][0] = Ax;
+			DX[i][1] = Bx;
+			DX[i][2] = Cx;
+
+			
+
+
+
+		}
+	}
+
+}
 
 int main()
 {
@@ -129,19 +178,6 @@ int main()
 
 	vector<vector<vector<double>>> ExFlux = exactFlux();
 	
-
-
-
-	vector<vector<double>> Ax = jac(U, "F", -1, -1, 10, 10);
-	vector<vector<double>> Cx = jac(U, "F", 1, 1, 10, 10);
-
-	printVec2D(Ax);
-	printVec2D(Cx);
-
-
-
-
-
 
 
 	int k = 2;	// Index for solution: 0 = pressure; 1 = u velocity; 2 = v velocity
