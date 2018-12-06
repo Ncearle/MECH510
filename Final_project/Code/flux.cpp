@@ -10,7 +10,6 @@
 // Given domain and velocities, sets and updates the bounary conditions
 void ghost(vector<vector<vector<double>>> &U)
 {
-	
 	// Top and Bottom Ghost Cells
 	for (int i = 1; i < imax-1; i++)
 	{
@@ -116,7 +115,7 @@ int main()
 	vector<double> L2 = L2Norm(E);
 
 	printVec(L2);
-	
+
 
 	getchar();
 	return 0;
