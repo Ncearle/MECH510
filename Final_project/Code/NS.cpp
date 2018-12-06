@@ -96,10 +96,10 @@ vector<vector<vector<double>>> flux(vector<vector<vector<double>>> &U)
 	return flux;
 }
 
-vector<vector<double>> jac(vector<vector<vector<double>>> &U, int FG, int FGpm, int Upm, int i, int j)
+vector<vector<double>> jac(vector<vector<vector<double>>> &U, string FG, int FGpm, int Upm, int i, int j)
 {
 	vector<vector<double>> J(3, vector<double>(3));
-	if (FG == 1)
+	if (FG == "F")
 	{
 		J[0][1] = 1.0 / (2*B);
 		J[1][0] = 1.0 / 2.0;
@@ -108,7 +108,7 @@ vector<vector<double>> jac(vector<vector<vector<double>>> &U, int FG, int FGpm, 
 		J[2][2] = (U[j][i][1] + U[j][i+FGpm][1])/4 + Upm / (Re*dx);
 	}
 
-	else if (FG == 2)
+	else if (FG == "G")
 	{
 		J[0][2] = 1.0 / (2*B);
 		J[1][1] = (U[j][i][2] + U[j+FGpm][i][2])/4 + Upm / (Re*dx);
@@ -132,45 +132,11 @@ int main()
 
 
 
-	vector<vector<double>> Ax(jmax, vector<double>(imax));
-	vector<vector<double>> Bx(jmax, vector<double>(imax));
-	vector<vector<double>> Cx(jmax, vector<double>(imax));
-	vector<vector<double>> Ay(jmax, vector<double>(imax));
-	vector<vector<double>> By(jmax, vector<double>(imax));
-	vector<vector<double>> Cy(jmax, vector<double>(imax));
-	for (int j = 1; j < jmax-1; j++)
-	{
-		for (int i = 1; i < imax-1; i++)
-		{
+	vector<vector<double>> Ax = jac(U, "F", -1, -1, 10, 10);
+	vector<vector<double>> Cx = jac(U, "F", 1, 1, 10, 10);
 
-			Ax[j][i] = j
-
-
-
-		}
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	printVec2D(Ax);
+	printVec2D(Cx);
 
 
 
