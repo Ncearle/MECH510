@@ -122,10 +122,39 @@ vector<vector<double>> jac(vector<vector<vector<double>>> &U, string FG, int FGp
 void Imp(vector<vector<vector<double>>> &U)
 {
 
+
+}
+
+int main()
+{
+	vector<vector<vector<double>>> U(jmax, vector<vector<double>>(imax, vector<double>(3)));
+	
+	init(U);
+	vector<vector<vector<double>>> FI = flux(U);
+
+	vector<vector<vector<double>>> ExFlux = exactFlux();
+	
+
+
+	int k = 2;	// Index for solution: 0 = pressure; 1 = u velocity; 2 = v velocity
+	// printVec3D(U, k, p);
+	// printVec3D(ExFlux, k, p);
+	// printVec3D(FI, k, p);
+
+	// vector<vector<vector<double>>> E = error(FI, ExFlux);
+	// vector<double> L2 = L2Norm(E);
+
+	// printVec(L2);
+
+
 	vector<vector<vector<vector<double>>>> DX(imax, vector<vector<vector<double>>>(3, vector<vector<double>>(3, vector<double>(3))));
 
-	for (int j = 1; j < jmax-1; j++)
-	{
+	vector<vector<vector<double>>> FI = flux(U);
+	vector<vector<double>> FIx(imax, vector<double>(3));
+
+	int j = 10;
+	// for (int j = 1; j < jmax-1; j++)
+	// {
 		for (int i = 1; i < imax-1; i++)
 		{
 
@@ -161,36 +190,6 @@ void Imp(vector<vector<vector<double>>> &U)
 			DX[i][2] = Cx;
 
 			
-
-
-
-		}
-	}
-
-}
-
-int main()
-{
-	vector<vector<vector<double>>> U(jmax, vector<vector<double>>(imax, vector<double>(3)));
-	
-	init(U);
-	vector<vector<vector<double>>> FI = flux(U);
-
-	vector<vector<vector<double>>> ExFlux = exactFlux();
-	
-
-
-	int k = 2;	// Index for solution: 0 = pressure; 1 = u velocity; 2 = v velocity
-	// printVec3D(U, k, p);
-	// printVec3D(ExFlux, k, p);
-	// printVec3D(FI, k, p);
-
-	vector<vector<vector<double>>> E = error(FI, ExFlux);
-	vector<double> L2 = L2Norm(E);
-
-	printVec(L2);
-
-
 	getchar();
 	return 0;
 }
