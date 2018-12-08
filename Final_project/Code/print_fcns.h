@@ -19,9 +19,9 @@ void printVec(vector<double> vec)
 {
 		for (int i = 0; i < vec.size(); i++)
 		{
-			cout << fixed << setprecision(p) << setw(p+5) << vec[i];
+			cout << fixed << setprecision(p) << setw(p+5) << vec[i] << endl;
 		}
-		cout << endl;
+		cout << endl << endl;
 }
 
 void printVec2D(vector<vector<double>> vec) 

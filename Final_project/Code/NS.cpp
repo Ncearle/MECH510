@@ -119,6 +119,21 @@ vector<vector<double>> jac(vector<vector<vector<double>>> &U, string FG, int FGp
 	return J;
 }
 
+vector<double> MVM(vector<vector<double>> &A, vector<double> &B)
+{
+	vector<double> C(3);
+	for (int j = 0; j < 3; j++)
+	{
+		double sum = 0;
+		for (int i = 0; i < 3; i++)
+		{
+			sum += A[j][i] * B[i];
+		}
+		C[j] = sum;
+	}
+	return C;
+}
+
 void Imp(vector<vector<vector<double>>> &U)
 {
 
@@ -134,9 +149,93 @@ int main()
 
 	vector<vector<vector<double>>> ExFlux = exactFlux();
 	
+	vector<vector<vector<vector<double>>>> DX(imax, vector<vector<vector<double>>>(3, vector<vector<double>>(3, vector<double>(3))));
+
+	vector<vector<double>> FIx(imax, vector<double>(3));
+
+	int j = 10;
+	int i = 10;
+
+	vector<vector<vector<double>>> Udelta(jmax, vector<vector<double>>(imax, vector<double>(3)));
+	Udelta[i][j][0] = pow(10, -6);
+	Udelta[i][j][1] = pow(10, -6);
+	Udelta[i][j][2] = pow(10, -6);
+
+	vector<vector<vector<double>>> Unew(jmax, vector<vector<double>>(imax, vector<double>(3)));
+
+	for (int j = 0; j < jmax; j++)
+	{
+		for (int i = 0; i < imax; i++)
+		{
+			for (int k = 0; k < 3; k++)
+			{
+				Unew[j][i][k] = U[j][i][k] + Udelta[j][i][k];
+			}
+		}
+	}
+
+	vector<vector<vector<double>>> FInew = flux(Unew);
+
+	vector<vector<double>> Ax = jac(U, "F", -1, -1, j, i);
+	vector<vector<double>> Bx(3, vector<double>(3));
+	vector<vector<double>> Bxp = jac(U, "F", 1, -1, j, i);
+	vector<vector<double>> Bxm = jac(U, "F", -1, 1, j, i);
+	vector<vector<double>> Cx = jac(U, "F", 1, 1, j, i);
+
+	vector<vector<double>> Ay = jac(U, "G", -1, -1, j, i);
+	vector<vector<double>> By(3, vector<double>(3));
+	vector<vector<double>> Byp = jac(U, "G", 1, -1, j, i);
+	vector<vector<double>> Bym = jac(U, "G", -1, 1, j, i);
+	vector<vector<double>> Cy = jac(U, "G", 1, 1, j, i);
+
+	for (int r = 0; r < 3; r++)
+	{
+		for (int c = 0; c < 3; c++)
+		{
+			Ax[r][c] = -1 * Ax[r][c];
+			Bx[r][c] = (Bxp[r][c] - Bxm[r][c]);
+			Cx[r][c] = 1 * Cx[r][c];
+
+			Ay[r][c] = -1 * Ay[r][c];
+			By[r][c] = (Byp[r][c] - Bym[r][c]);
+			Cy[r][c] = 1 * Cy[r][c];
+		}
+	}
 
 
-	int k = 2;	// Index for solution: 0 = pressure; 1 = u velocity; 2 = v velocity
+	vector<vector<vector<double>>> FIdelta = error(FI, FInew);
+
+	printVec(FIdelta[10][10]);
+
+	vector<double> AxU = MVM(Ax, Udelta[j][i-1]);	
+	vector<double> AyU = MVM(Ay, Udelta[j-1][i]);
+	vector<double> BxU = MVM(Bx, Udelta[j][i]);
+	vector<double> ByU = MVM(By, Udelta[j][i]);
+	vector<double> CxU = MVM(Cx, Udelta[j][i+1]);
+	vector<double> CyU = MVM(Cy, Udelta[j+1][i]);
+	vector<double> RHS(3);
+	for (int n = 0; n < 3; n++)
+	{
+		RHS[n] = AxU[n] + AyU[n] + BxU[n] + ByU[n] + CxU[n] + CyU[n];	
+	}
+	printVec(RHS);
+	printVec2D(Ax);
+	printVec2D(Ay);
+	printVec2D(Bx);
+	printVec2D(By);
+	printVec2D(Cx);
+	printVec2D(Cy);
+
+
+	int k = 1;	// Index for solution: 0 = pressure; 1 = u velocity; 2 = v velocity
+	// printVec3D(FIdelta, k, p);
+
+
+
+
+
+
+	
 	// printVec3D(U, k, p);
 	// printVec3D(ExFlux, k, p);
 	// printVec3D(FI, k, p);
@@ -146,48 +245,7 @@ int main()
 
 	// printVec(L2);
 
-
-	vector<vector<vector<vector<double>>>> DX(imax, vector<vector<vector<double>>>(3, vector<vector<double>>(3, vector<double>(3))));
-
-	vector<vector<vector<double>>> FI = flux(U);
-	vector<vector<double>> FIx(imax, vector<double>(3));
-
-	int j = 10;
-	// for (int j = 1; j < jmax-1; j++)
-	// {
-		for (int i = 1; i < imax-1; i++)
-		{
-
-			vector<vector<double>> Ax = jac(U, "F", -1, -1, j, i);
-			vector<vector<double>> Bx(3, vector<double>(3));
-			vector<vector<double>> Bxp = jac(U, "F", 1, -1, j, i);
-			vector<vector<double>> Bxm = jac(U, "F", -1, 1, j, i);
-			vector<vector<double>> Cx = jac(U, "F", 1, 1, j, i);
-
-			vector<vector<double>> Ay = jac(U, "G", -1, -1, j, i);
-			vector<vector<double>> By(3, vector<double>(3));
-			vector<vector<double>> Byp = jac(U, "G", 1, -1, j, i);
-			vector<vector<double>> Bym = jac(U, "G", -1, 1, j, i);
-			vector<vector<double>> Cy = jac(U, "G", 1, 1, j, i);
-
-			for (int r = 0; r < 3; r++)
-			{
-				for (int c = 0; c < 3; c++)
-				{
-					Ax[r][c] = -dt * Ax[r][c];
-					Bx[r][c] = 1 + dt*(Bxp[r][c] - Bxm[r][c]);
-					Cx[r][c] = dt * Cx[r][c];
-
-					Ay[r][c] = -dt * Ay[r][c];
-					By[r][c] = 1 + dt*(Byp[r][c] - Bym[r][c]);
-					Cy[r][c] = dt * Cy[r][c];
-
-				}
-			}
-
-			DX[i][0] = Ax;
-			DX[i][1] = Bx;
-			DX[i][2] = Cx;
+	// }
 
 			
 	getchar();
