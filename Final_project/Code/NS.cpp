@@ -157,9 +157,9 @@ int main()
 	int i = 10;
 
 	vector<vector<vector<double>>> Udelta(jmax, vector<vector<double>>(imax, vector<double>(3)));
-	Udelta[i][j][0] = pow(10, -6);
-	Udelta[i][j][1] = pow(10, -6);
-	Udelta[i][j][2] = pow(10, -6);
+	Udelta[j][i][0] = pow(10, -6);
+	Udelta[j][i][1] = pow(10, -6);
+	Udelta[j][i][2] = pow(10, -6);
 
 	vector<vector<vector<double>>> Unew(jmax, vector<vector<double>>(imax, vector<double>(3)));
 
@@ -202,10 +202,9 @@ int main()
 		}
 	}
 
-
 	vector<vector<vector<double>>> FIdelta = error(FI, FInew);
 
-	printVec(FIdelta[10][10]);
+	printVec(FIdelta[j][i]);
 
 	vector<double> AxU = MVM(Ax, Udelta[j][i-1]);	
 	vector<double> AyU = MVM(Ay, Udelta[j-1][i]);
@@ -216,24 +215,18 @@ int main()
 	vector<double> RHS(3);
 	for (int n = 0; n < 3; n++)
 	{
-		RHS[n] = AxU[n] + AyU[n] + BxU[n] + ByU[n] + CxU[n] + CyU[n];	
+		RHS[n] = (AxU[n] + AyU[n] + BxU[n] + ByU[n] + CxU[n] + CyU[n])/dt;
 	}
 	printVec(RHS);
-	printVec2D(Ax);
-	printVec2D(Ay);
-	printVec2D(Bx);
-	printVec2D(By);
-	printVec2D(Cx);
-	printVec2D(Cy);
-
+	// printVec(AxU);
+	// printVec(AyU);
+	// printVec(BxU);
+	// printVec(ByU);
+	// printVec(CxU);
+	// printVec(CyU);
 
 	int k = 1;	// Index for solution: 0 = pressure; 1 = u velocity; 2 = v velocity
 	// printVec3D(FIdelta, k, p);
-
-
-
-
-
 
 	
 	// printVec3D(U, k, p);
