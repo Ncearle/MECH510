@@ -43,4 +43,4 @@ extern constexpr int u0 = 1;		// Initial x velocity
 extern constexpr int v0 = 1;		// Initial y velocity
 extern constexpr int P0 = 1;		// Initial pressure
 
-extern constexpr int p = 8;			// Precision for printing to console
+extern constexpr int p = 12;			// Precision for printing to console

@@ -206,6 +206,16 @@ int main()
 
 	printVec(FIdelta[j][i]);
 
+	vector<double> X(3);
+	vector<double> Y = MVM(Bxp, Udelta[10][10]);
+
+	for (int i = 0; i <3; i++);
+	{
+		X[i] = FInew[10][11][i] - FI[10][10][i];
+		Y[i] = -1 * Y[i] / dx;
+	}
+
+
 	vector<double> AxU = MVM(Ax, Udelta[j][i-1]);	
 	vector<double> AyU = MVM(Ay, Udelta[j-1][i]);
 	vector<double> BxU = MVM(Bx, Udelta[j][i]);
@@ -218,6 +228,9 @@ int main()
 		RHS[n] = (AxU[n] + AyU[n] + BxU[n] + ByU[n] + CxU[n] + CyU[n])/dt;
 	}
 	printVec(RHS);
+
+	printVec(X);
+	printVec(Y);
 	// printVec(AxU);
 	// printVec(AyU);
 	// printVec(BxU);
