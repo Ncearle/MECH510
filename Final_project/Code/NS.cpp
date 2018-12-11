@@ -117,6 +117,8 @@ vector<vector<double>> jac(vector<vector<vector<double>>> &U, string FG, int FGp
 		J[1][1] = -(U[j][i][1] + U[j][i+FGpm][1])/2 + Upm / (Re*dx);
 		J[2][1] = -(U[j][i][2] + U[j][i+FGpm][2])/4;
 		J[2][2] = -(U[j][i][1] + U[j][i+FGpm][1])/4 + Upm / (Re*dx);
+
+		J = ScaM(1/dx, J);
 	}
 
 	else if (FG == "G")
@@ -126,6 +128,8 @@ vector<vector<double>> jac(vector<vector<vector<double>>> &U, string FG, int FGp
 		J[1][2] = -(U[j][i][1] + U[j+FGpm][i][1])/4;
 		J[2][0] = -1.0 / 2.0;
 		J[2][2] = -(U[j][i][2] + U[j+FGpm][i][2])/2 + Upm / (Re*dy);
+
+		J = ScaM(1/dy, J);
 	}
 	return J;
 }
@@ -195,7 +199,7 @@ int main()
 	vector<double> RHS(3);
 	for (int n = 0; n < 3; n++)
 	{
-		RHS[n] = (AxU[n]  + BxU[n] + + CxU[n])/dx + (AyU[n] + ByU[n] + CyU[n])/dy;
+		RHS[n] = (AxU[n]  + BxU[n] + + CxU[n]) + (AyU[n] + ByU[n] + CyU[n]);
 	}
 	printVec(RHS);
 
