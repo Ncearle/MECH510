@@ -2,10 +2,11 @@
 // Source file for Navier-Stokes Equation
 //=================================================
 #include "constant.h"
-#include "print_fcns.h"
-#include "error_fcns.h"
+#include "print_funcs.h"
+#include "error_funcs.h"
 #include "exact.h"
 #include "thomas.h"
+#include "vecmat_funcs.h"
 
 // Given domain and velocities, sets and updates the bounary conditions
 void ghost(vector<vector<vector<double>>> &U)
@@ -14,11 +15,15 @@ void ghost(vector<vector<vector<double>>> &U)
 	for (int i = 1; i < imax-1; i++)
 	{
 		double x = (i - 0.5) / (imax - 2);
-		// u velocity
+		// pressure -- Neumann boundary condition (no flux across boundary)
+		U[0][i][0] = U[1][i][0];
+		U[jmax-1][i][0] = U[jmax-2][i][0];
+
+		// u velocity -- Dirichlet boundary condition (no-slip at wall)
 		U[0][i][1] = -U[1][i][1];
 		U[jmax-1][i][1] = -U[jmax-2][i][1];
 
-		//v velocity
+		// v velocity -- Dirichlet boundary condition (no-slip at wall)
 		U[0][i][2] = -U[1][i][2];
 		U[jmax-1][i][2] = -U[jmax-2][i][2];
 	}
@@ -27,9 +32,15 @@ void ghost(vector<vector<vector<double>>> &U)
 	for (int j = 1; j < jmax-1; j++)
 	{
 		double y = (j - 0.5) / (jmax - 2);
+		// pressure -- Neumann boundary condition (no flux across boundary)
+		U[j][0][0] = U[j][1][0];		
+		U[j][imax-1][0] = U[j][imax-2][0];
+
+		// u velocity -- Dirichlet boundary condition (no-slip at wall)
 		U[j][0][1] = -U[j][1][1];
 		U[j][imax-1][1] = -U[j][imax-2][1];
 
+		// v velocity -- Dirichlet boundary condition (no-slip at wall)
 		U[j][0][2] = -U[j][1][2];
 		U[j][imax-1][2] = -U[j][imax-2][2];
 	}
@@ -101,37 +112,22 @@ vector<vector<double>> jac(vector<vector<vector<double>>> &U, string FG, int FGp
 	vector<vector<double>> J(3, vector<double>(3));
 	if (FG == "F")
 	{
-		J[0][1] = 1.0 / (2*B);
-		J[1][0] = 1.0 / 2.0;
-		J[1][1] = (U[j][i][1] + U[j][i+FGpm][1])/2 + Upm / (Re*dx);
-		J[2][1] = (U[j][i][2] + U[j][i+FGpm][2])/4;
-		J[2][2] = (U[j][i][1] + U[j][i+FGpm][1])/4 + Upm / (Re*dx);
+		J[0][1] = -1.0 / (2*B);
+		J[1][0] = -1.0 / 2.0;
+		J[1][1] = -(U[j][i][1] + U[j][i+FGpm][1])/2 + Upm / (Re*dx);
+		J[2][1] = -(U[j][i][2] + U[j][i+FGpm][2])/4;
+		J[2][2] = -(U[j][i][1] + U[j][i+FGpm][1])/4 + Upm / (Re*dx);
 	}
 
 	else if (FG == "G")
 	{
-		J[0][2] = 1.0 / (2*B);
-		J[1][1] = (U[j][i][2] + U[j+FGpm][i][2])/4 + Upm / (Re*dx);
-		J[1][2] = (U[j][i][1] + U[j+FGpm][i][1])/4;
-		J[2][0] = 1.0 / 2.0;
-		J[2][2] = (U[j][i][2] + U[j+FGpm][i][2])/2 + Upm / (Re*dx);
+		J[0][2] = -1.0 / (2*B);
+		J[1][1] = -(U[j][i][2] + U[j+FGpm][i][2])/4 + Upm / (Re*dy);
+		J[1][2] = -(U[j][i][1] + U[j+FGpm][i][1])/4;
+		J[2][0] = -1.0 / 2.0;
+		J[2][2] = -(U[j][i][2] + U[j+FGpm][i][2])/2 + Upm / (Re*dy);
 	}
 	return J;
-}
-
-vector<double> MVM(vector<vector<double>> &A, vector<double> &B)
-{
-	vector<double> C(3);
-	for (int j = 0; j < 3; j++)
-	{
-		double sum = 0;
-		for (int i = 0; i < 3; i++)
-		{
-			sum += A[j][i] * B[i];
-		}
-		C[j] = sum;
-	}
-	return C;
 }
 
 void Imp(vector<vector<vector<double>>> &U)
@@ -143,14 +139,11 @@ void Imp(vector<vector<vector<double>>> &U)
 int main()
 {
 	vector<vector<vector<double>>> U(jmax, vector<vector<double>>(imax, vector<double>(3)));
-	
 	init(U);
+
 	vector<vector<vector<double>>> FI = flux(U);
-
 	vector<vector<vector<double>>> ExFlux = exactFlux();
-	
 	vector<vector<vector<vector<double>>>> DX(imax, vector<vector<vector<double>>>(3, vector<vector<double>>(3, vector<double>(3))));
-
 	vector<vector<double>> FIx(imax, vector<double>(3));
 
 	int j = 10;
@@ -161,62 +154,39 @@ int main()
 	Udelta[j][i][1] = pow(10, -6);
 	Udelta[j][i][2] = pow(10, -6);
 
-	vector<vector<vector<double>>> Unew(jmax, vector<vector<double>>(imax, vector<double>(3)));
-
-	for (int j = 0; j < jmax; j++)
-	{
-		for (int i = 0; i < imax; i++)
-		{
-			for (int k = 0; k < 3; k++)
-			{
-				Unew[j][i][k] = U[j][i][k] + Udelta[j][i][k];
-			}
-		}
-	}
-
+	vector<vector<vector<double>>> Unew = Madd3D(U, Udelta);
 	vector<vector<vector<double>>> FInew = flux(Unew);
 
 	vector<vector<double>> Ax = jac(U, "F", -1, -1, j, i);
-	vector<vector<double>> Bx(3, vector<double>(3));
 	vector<vector<double>> Bxp = jac(U, "F", 1, -1, j, i);
 	vector<vector<double>> Bxm = jac(U, "F", -1, 1, j, i);
 	vector<vector<double>> Cx = jac(U, "F", 1, 1, j, i);
 
 	vector<vector<double>> Ay = jac(U, "G", -1, -1, j, i);
-	vector<vector<double>> By(3, vector<double>(3));
 	vector<vector<double>> Byp = jac(U, "G", 1, -1, j, i);
 	vector<vector<double>> Bym = jac(U, "G", -1, 1, j, i);
 	vector<vector<double>> Cy = jac(U, "G", 1, 1, j, i);
 
-	for (int r = 0; r < 3; r++)
-	{
-		for (int c = 0; c < 3; c++)
-		{
-			Ax[r][c] = -1 * Ax[r][c];
-			Bx[r][c] = (Bxp[r][c] - Bxm[r][c]);
-			Cx[r][c] = 1 * Cx[r][c];
-
-			Ay[r][c] = -1 * Ay[r][c];
-			By[r][c] = (Byp[r][c] - Bym[r][c]);
-			Cy[r][c] = 1 * Cy[r][c];
-		}
-	}
+	Ax = ScaM(-1, Ax);
+	Ay = ScaM(-1, Ay);
+	vector<vector<double>> Bx = Msub(Bxp, Bxm);
+	vector<vector<double>> By = Msub(Byp, Bym);
+	Cx = ScaM(1, Cx);
+	Cy = ScaM(1, Cy);
 
 	vector<vector<vector<double>>> FIdelta = error(FI, FInew);
 
-	printVec(FIdelta[j][i]);
-
-	vector<double> X(3);
+	// printVec(FIdelta[j][i]);
+	// printVec3D(FI, 0);
+	vector<double> X = Vsub(FInew[j][i], FI[j][i]);
 	vector<double> Y = MVM(Bxp, Udelta[10][10]);
 
-	for (int i = 0; i <3; i++);
-	{
-		X[i] = FInew[10][11][i] - FI[10][10][i];
-		Y[i] = -1 * Y[i] / dx;
-	}
+	Y = ScaV(-1/dx, Y);	
 
+	printVec(X);
+	// printVec(Y);
 
-	vector<double> AxU = MVM(Ax, Udelta[j][i-1]);	
+	vector<double> AxU = MVM(Ax, Udelta[j][i-1]);
 	vector<double> AyU = MVM(Ay, Udelta[j-1][i]);
 	vector<double> BxU = MVM(Bx, Udelta[j][i]);
 	vector<double> ByU = MVM(By, Udelta[j][i]);
@@ -225,18 +195,18 @@ int main()
 	vector<double> RHS(3);
 	for (int n = 0; n < 3; n++)
 	{
-		RHS[n] = (AxU[n] + AyU[n] + BxU[n] + ByU[n] + CxU[n] + CyU[n])/dt;
+		RHS[n] = (AxU[n]  + BxU[n] + + CxU[n])/dx + (AyU[n] + ByU[n] + CyU[n])/dy;
 	}
 	printVec(RHS);
 
-	printVec(X);
-	printVec(Y);
 	// printVec(AxU);
 	// printVec(AyU);
 	// printVec(BxU);
 	// printVec(ByU);
 	// printVec(CxU);
 	// printVec(CyU);
+
+	printVec(Vsub(X, RHS));
 
 	int k = 1;	// Index for solution: 0 = pressure; 1 = u velocity; 2 = v velocity
 	// printVec3D(FIdelta, k, p);

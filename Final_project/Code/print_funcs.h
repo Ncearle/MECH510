@@ -6,7 +6,7 @@
 #define HEADER_FILE
 #endif // !HEADER_FILE
 
-#include "error_fcns.h"
+#include "error_funcs.h"
 #include "constant.h"
 
 void printVec(vector<double> vec);		// Prints a vector to the console
@@ -37,7 +37,7 @@ void printVec2D(vector<vector<double>> vec)
 	cout << endl;
 }
 
-void printVec3D(vector<vector<vector<double>>> vec, int k, int p) 
+void printVec3D(vector<vector<vector<double>>> vec, int k) 
 {
 	for (int j = vec.size()-1; j > -1; j--)
 	{

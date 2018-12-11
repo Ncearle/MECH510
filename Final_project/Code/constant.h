@@ -19,7 +19,7 @@ using namespace std;
 
 // Domain Constants
 extern constexpr int imax = 22;
-extern constexpr int jmax = 22;
+extern constexpr int jmax = 42;
 
 extern constexpr double xmax = 1;
 extern constexpr double ymax = 1;
@@ -43,4 +43,4 @@ extern constexpr int u0 = 1;		// Initial x velocity
 extern constexpr int v0 = 1;		// Initial y velocity
 extern constexpr int P0 = 1;		// Initial pressure
 
-extern constexpr int p = 12;			// Precision for printing to console
+extern constexpr int p = 15;		// Precision for printing to console

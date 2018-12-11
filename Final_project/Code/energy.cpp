@@ -2,8 +2,8 @@
 // Source file for Energy Equation
 //=================================================
 #include "constant.h"
-#include "print_fcns.h"
-#include "error_fcns.h"
+#include "print_funcs.h"
+#include "error_funcs.h"
 #include "exact.h"
 #include "thomas.h"
 
