@@ -1,6 +1,6 @@
 #include "constant.h"
 #include "print_funcs.h"
-#include "mat_manip.h"
+#include "vecmat_funcs.h"
 
 int main()
 {
@@ -41,4 +41,7 @@ int main()
 	// printVec2D(E);
 	// printVec2D(F);
 	printVec2D(G);
+
+	printVec2D(I(3));
+
 }

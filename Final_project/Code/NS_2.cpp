@@ -136,84 +136,110 @@ vector<vector<double>> jac(vector<vector<vector<double>>> &U, string FG, int FGp
 
 void Imp(vector<vector<vector<double>>> &U)
 {
+	init(U);
+	vector<vector<double>> I = Id(3);
 
+	vector<vector<vector<double>>> FI = flux(U);
+	vector<vector<vector<vector<double>>>> DX(imax, vector<vector<vector<double>>>(3, vector<vector<double>>(3, vector<double>(3))));
+	vector<vector<double>> FIx(imax, vector<double>(3));
+	vector<vector<vector<double>>> Utilda(jmax, vector<vector<double>>(imax, vector<double>(3)));
 
+	for (int j = 1; j < jmax - 1; j++)
+	{
+		for (int i = 1; i < imax - 1; i++)
+		{
+			vector<vector<double>> Ax = jac(U, "F", -1, -1, j, i);
+			vector<vector<double>> Bxp = jac(U, "F", 1, -1, j, i);
+			vector<vector<double>> Bxm = jac(U, "F", -1, 1, j, i);
+			vector<vector<double>> Cx = jac(U, "F", 1, 1, j, i);
+			vector<vector<double>> Bx = Msub(Bxp, Bxm);
+
+			Ax = ScaM(-dt, Ax);
+			Bx = ScaM(dt, Bx);
+			Cx = ScaM(dt, Cx);
+			
+			DX[i][0] = Ax;
+			DX[i][1] = Madd(I, Bx);
+			DX[i][2] = Cx;
+
+			FIx[i] = ScaV(dt, FI[j][i]);
+		}
+
+		DX[0][0] = I;
+		DX[0][1] = I;
+		DX[0][1][0][0] = -1;
+
+		DX[imax-1][1] = I;
+		DX[imax-1][2] = I;
+		DX[imax-1][2][0][0] = -1;
+
+		// FIx boundary cells are already set to zero
+		SolveBlockTri(DX, FIx, imax);
+		Utilda[j] = FIx;
+	}
+	// printTable(Utilda);
+
+	vector<vector<vector<vector<double>>>> DY(jmax, vector<vector<vector<double>>>(3, vector<vector<double>>(3, vector<double>(3))));
+	vector<vector<double>> Uty(jmax, vector<double>(3));
+	vector<vector<vector<double>>> deltaU(imax, vector<vector<double>>(jmax, vector<double>(3)));
+
+	for (int i = 1; i < imax - 1; i++)
+	{
+		for (int j = 1; j < jmax - 1; j++)
+		{
+			vector<vector<double>> Ay = jac(U, "G", -1, -1, j, i);
+			vector<vector<double>> Byp = jac(U, "G", 1, -1, j, i);
+			vector<vector<double>> Bym = jac(U, "G", -1, 1, j, i);
+			vector<vector<double>> Cy = jac(U, "G", 1, 1, j, i);
+			vector<vector<double>> By = Msub(Byp, Bym);
+
+			Ay = ScaM(-dt, Ay);
+			By = ScaM(dt, By);
+			Cy = ScaM(dt, Cy);
+
+			DY[j][0] = Ay;
+			DY[j][1] = Madd(I, By);
+			DY[j][2] = Cy;
+
+			Uty[j] = Utilda[j][i];
+		}
+
+		DY[0][0] = I;
+		DY[0][1] = I;
+		DY[0][1][0][0] = -1;
+
+		DY[jmax-1][1] = I;
+		DY[jmax-1][2] = I;
+		DY[jmax-1][2][0][0] = -1;
+
+		SolveBlockTri(DY, Uty, jmax);
+		deltaU[i] = Uty;
+	}
+
+	printTable(deltaU);
+
+	for (int j = 1; j < jmax-1; j++)
+	{
+		for (int i = 1; i < imax-1; i++)
+		{
+			for (int k = 0; k < 3; k++)
+			{
+				U[j][i][k] += deltaU[i][j][k];	// deltaU is in the shape of the transpose of U
+			}
+		}
+	}
+	ghost(U);
 }
 
 int main()
 {
 	vector<vector<vector<double>>> U(jmax, vector<vector<double>>(imax, vector<double>(3)));
 	init(U);
+	printTable(U);
+	Imp(U);
+	// printTable(U);
 
-	vector<vector<vector<double>>> FI = flux(U);
-	vector<vector<vector<double>>> ExFlux = exactFlux();
 
-	int j = 10;
-	int i = 10;
-
-	vector<vector<vector<double>>> Udelta(jmax, vector<vector<double>>(imax, vector<double>(3)));
-	Udelta[j][i][0] = pow(10, -6);
-	Udelta[j][i][1] = pow(10, -6);
-	Udelta[j][i][2] = pow(10, -6);
-
-	vector<vector<vector<double>>> Unew = Madd3D(U, Udelta);
-	vector<vector<vector<double>>> FInew = flux(Unew);
-
-	vector<vector<double>> Ax = jac(U, "F", -1, -1, j, i);
-	vector<vector<double>> Bxp = jac(U, "F", 1, -1, j, i);
-	vector<vector<double>> Bxm = jac(U, "F", -1, 1, j, i);
-	vector<vector<double>> Cx = jac(U, "F", 1, 1, j, i);
-
-	vector<vector<double>> Ay = jac(U, "G", -1, -1, j, i);
-	vector<vector<double>> Byp = jac(U, "G", 1, -1, j, i);
-	vector<vector<double>> Bym = jac(U, "G", -1, 1, j, i);
-	vector<vector<double>> Cy = jac(U, "G", 1, 1, j, i);
-
-	Ax = ScaM(-1, Ax);
-	Ay = ScaM(-1, Ay);
-	vector<vector<double>> Bx = Msub(Bxp, Bxm);
-	vector<vector<double>> By = Msub(Byp, Bym);
-	Cx = ScaM(1, Cx);
-	Cy = ScaM(1, Cy);
-
-	vector<vector<vector<double>>> FIdelta = error(FI, FInew);
-
-	// printVec(FIdelta[j][i]);
-	// printVec3D(FI, 0);
-	vector<double> X = Vsub(FInew[j][i], FI[j][i]);
-	vector<double> Y = MVM(Bxp, Udelta[10][10]);
-
-	Y = ScaV(-1/dx, Y);	
-
-	printVec(X);
-	// printVec(Y);
-
-	vector<double> AxU = MVM(Ax, Udelta[j][i-1]);
-	vector<double> AyU = MVM(Ay, Udelta[j-1][i]);
-	vector<double> BxU = MVM(Bx, Udelta[j][i]);
-	vector<double> ByU = MVM(By, Udelta[j][i]);
-	vector<double> CxU = MVM(Cx, Udelta[j][i+1]);
-	vector<double> CyU = MVM(Cy, Udelta[j+1][i]);
-	vector<double> RHS(3);
-	for (int n = 0; n < 3; n++)
-	{
-		RHS[n] = (AxU[n]  + BxU[n] + CxU[n] + AyU[n] + ByU[n] + CyU[n]);
-	}
-	printVec(RHS);
-
-	// printVec(AxU);
-	// printVec(AyU);
-	// printVec(BxU);
-	// printVec(ByU);
-	// printVec(CxU);
-	// printVec(CyU);
-
-	printVec(Vsub(X, RHS));
-
-	vector<vector<double>> I = Id(3);
-
-	vector<vector<vector<vector<double>>>> DX(imax, vector<vector<vector<double>>>(3, vector<vector<double>>(3, vector<double>(3))));
-	vector<vector<double>> FIx(imax, vector<double>(3));
 
 	int k = 1;	// Index for solution: 0 = pressure; 1 = u velocity; 2 = v velocity
 	// printVec3D(FIdelta, k, p);

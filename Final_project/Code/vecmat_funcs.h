@@ -8,7 +8,7 @@
 
 #include "constant.h"
 
-
+vector<vector<double>> Id(int d);	// Identity matrix
 vector<double> MVM(vector<vector<double>> &A, vector<double> &B);	// Matrix vector multiplication
 vector<vector<double>> MM(vector<vector<double>> &A, vector<vector<double>> &B);	// Matrix multiplication
 vector<double> Vadd(vector<double> &A, vector<double> &B);	// Vector Addition
@@ -19,6 +19,16 @@ vector<double> ScaV(double S, vector<double> &A);	// Scalar vector multiplicatio
 vector<vector<double>> ScaM(double S, vector<vector<double>> &A);	// Scalar matrix multiplication
 vector<vector<vector<double>>> Madd3D(vector<vector<vector<double>>> &A, vector<vector<vector<double>>> &B);	// Matrix addition
 vector<vector<vector<double>>> Msub3D(vector<vector<vector<double>>> &A, vector<vector<vector<double>>> &B);	// Matrix subtraction
+
+vector<vector<double>> Id(int d)
+{
+	vector<vector<double>> I(d, vector<double>(d));
+	for (int j = 0; j < d; j++)
+	{
+		I[j][j] = 1;
+	}
+	return I;
+}
 
 vector<double> MVM(vector<vector<double>> &A, vector<double> &B)
 {

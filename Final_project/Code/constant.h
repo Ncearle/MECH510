@@ -18,8 +18,8 @@
 using namespace std;
 
 // Domain Constants
-extern constexpr int imax = 22;
-extern constexpr int jmax = 42;
+extern constexpr int imax = 12;
+extern constexpr int jmax = 12;
 
 extern constexpr double xmax = 1;
 extern constexpr double ymax = 1;
@@ -34,7 +34,7 @@ extern constexpr double tol = pow(10, -9); // Tolerance for max change, "nano"
 
 // Constants
 extern constexpr double pi = M_PI;	// Pi
-extern constexpr double Re = 10.0;	// Reynolds number
+extern constexpr double Re = 100.0;	// Reynolds number
 extern constexpr double Pr = 0.7;	// Prandtl number
 extern constexpr int B = 1;			// Beta
 
@@ -43,4 +43,4 @@ extern constexpr int u0 = 1;		// Initial x velocity
 extern constexpr int v0 = 1;		// Initial y velocity
 extern constexpr int P0 = 1;		// Initial pressure
 
-extern constexpr int p = 15;		// Precision for printing to console
+extern constexpr int p = 20;		// Precision for printing to console
