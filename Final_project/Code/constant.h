@@ -26,8 +26,6 @@ extern constexpr double ymax = 1;
 extern constexpr double dx = xmax / (imax - 2);
 extern constexpr double dy = ymax / (jmax - 2);
 
-extern constexpr int ubar = 3;		// average velocity in x [m/s]
-
 extern constexpr double dt = 0.05;
 
 extern constexpr double tol = pow(10, -9); // Tolerance for max change, "nano"
@@ -35,12 +33,11 @@ extern constexpr double tol = pow(10, -9); // Tolerance for max change, "nano"
 // Constants
 extern constexpr double pi = M_PI;	// Pi
 extern constexpr double Re = 100.0;	// Reynolds number
-extern constexpr double Pr = 0.7;	// Prandtl number
-extern constexpr int B = 1;			// Beta
+extern constexpr double B = 1.0;			// Beta
 
 // For Parts 1,2
 extern constexpr int u0 = 1;		// Initial x velocity
 extern constexpr int v0 = 1;		// Initial y velocity
 extern constexpr int P0 = 1;		// Initial pressure
 
-extern constexpr int p = 20;		// Precision for printing to console
+extern constexpr int p = 6;		// Precision for printing to console

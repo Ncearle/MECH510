@@ -57,7 +57,7 @@ void init(vector<vector<vector<double>>> &U)
 			double x = (i - 0.5) / (imax - 2);
 
 			// Pressure
-			U[j][i][0] = P0 * cos(pi*x) * cos(pi*y);
+			U[j][i][0] = P0 * cos(pi*x) * cos(pi * y);
 
 			// u velocity
 			U[j][i][1] = u0 * sin(pi*x) * sin(2*pi*y);
@@ -112,24 +112,24 @@ vector<vector<double>> jac(vector<vector<vector<double>>> &U, string FG, int FGp
 	vector<vector<double>> J(3, vector<double>(3));
 	if (FG == "F")
 	{
-		J[0][1] = -1.0 / (2*B);
-		J[1][0] = -1.0 / 2.0;
-		J[1][1] = -(U[j][i][1] + U[j][i+FGpm][1])/2 + Upm / (Re*dx);
-		J[2][1] = -(U[j][i][2] + U[j][i+FGpm][2])/4;
-		J[2][2] = -(U[j][i][1] + U[j][i+FGpm][1])/4 + Upm / (Re*dx);
+		J[0][1] = 1.0 / (2*B);
+		J[1][0] = 1.0 / 2.0;
+		J[1][1] = (U[j][i][1] + U[j][i+FGpm][1])/2 + Upm / (Re*dx);
+		J[2][1] = (U[j][i][2] + U[j][i+FGpm][2])/4;
+		J[2][2] = (U[j][i][1] + U[j][i+FGpm][1])/4 + Upm / (Re*dx);
 
-		// J = ScaM(1/dx, J);
+		J = ScaM(1/dx, J);
 	}
 
 	else if (FG == "G")
 	{
-		J[0][2] = -1.0 / (2*B);
-		J[1][1] = -(U[j][i][2] + U[j+FGpm][i][2])/4 + Upm / (Re*dy);
-		J[1][2] = -(U[j][i][1] + U[j+FGpm][i][1])/4;
-		J[2][0] = -1.0 / 2.0;
-		J[2][2] = -(U[j][i][2] + U[j+FGpm][i][2])/2 + Upm / (Re*dy);
+		J[0][2] = 1.0 / (2*B);
+		J[1][1] = (U[j][i][2] + U[j+FGpm][i][2])/4 + Upm / (Re*dy);
+		J[1][2] = (U[j][i][1] + U[j+FGpm][i][1])/4;
+		J[2][0] = 1.0 / 2.0;
+		J[2][2] = (U[j][i][2] + U[j+FGpm][i][2])/2 + Upm / (Re*dy);
 
-		// J = ScaM(1/dy, J);
+		J = ScaM(1/dy, J);
 	}
 	return J;
 }
@@ -210,13 +210,13 @@ void Imp(vector<vector<vector<double>>> &U)
 				Uty[j] = Utilda[j][i];
 			}
 
-			DY[0][0] = I;
 			DY[0][1] = I;
-			DY[0][1][0][0] = -1;
+			DY[0][2] = I;
+			DY[0][2][0][0] = -1;
 
+			DY[jmax-1][0] = I;
 			DY[jmax-1][1] = I;
-			DY[jmax-1][2] = I;
-			DY[jmax-1][2][0][0] = -1;
+			DY[jmax-1][1][0][0] = -1;
 
 			SolveBlockTri(DY, Uty, jmax);
 			deltaU[i] = Uty;
