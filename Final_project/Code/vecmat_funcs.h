@@ -19,6 +19,9 @@ vector<double> ScaV(double S, vector<double> &A);	// Scalar vector multiplicatio
 vector<vector<double>> ScaM(double S, vector<vector<double>> &A);	// Scalar matrix multiplication
 vector<vector<vector<double>>> Madd3D(vector<vector<vector<double>>> &A, vector<vector<vector<double>>> &B);	// Matrix addition
 vector<vector<vector<double>>> Msub3D(vector<vector<vector<double>>> &A, vector<vector<vector<double>>> &B);	// Matrix subtraction
+vector<vector<vector<double>>> ScaM3(double S, vector<vector<vector<double>>> &A); // Scaler 3D matrix multiplication
+vector<vector<vector<double>>> copy3(vector<vector<vector<double>>> &A); // Copies a 3D matrix
+
 
 vector<vector<double>> Id(int d)
 {
@@ -259,6 +262,46 @@ vector<vector<vector<double>>> Msub3D(vector<vector<vector<double>>> &A, vector<
 	else
 	{
 		cout << "\n!!ADDITION FAILED -- MATRIX DIMENSIONS MUST MATCH!!\n";
+	}
+	return C;
+}
+
+vector<vector<vector<double>>> ScaM3(double S, vector<vector<vector<double>>> &A)
+{
+	int Ar = A.size();
+	int Ac = A[0].size();
+	int Ak = A[0][0].size();
+
+	vector<vector<vector<double>>> C(Ar, vector<vector<double>>(Ac, vector<double>(Ak)));
+	for (int r = 0; r < Ar; r++)
+	{
+		for (int c = 0; c < Ac; c++)
+		{
+			for (int k = 0; k < Ak; k++)
+			{
+				C[r][c][k] = S * A[r][c][k];
+			}
+		}
+	}
+	return C;
+}
+
+vector<vector<vector<double>>> copy3(vector<vector<vector<double>>> &A)
+{
+	int Ar = A.size();
+	int Ac = A[0].size();
+	int Ak = A[0][0].size();
+
+	vector<vector<vector<double>>> C(Ar, vector<vector<double>>(Ac, vector<double>(Ak)));
+	for (int r = 0; r < Ar; r++)
+	{
+		for (int c = 0; c < Ac; c++)
+		{
+			for (int k = 0; k < Ak; k++)
+			{
+				C[r][c][k] = A[r][c][k];
+			}
+		}
 	}
 	return C;
 }

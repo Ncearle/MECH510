@@ -33,7 +33,7 @@ extern constexpr double tol = pow(10, -9); // Tolerance for max change, "nano"
 // Constants
 extern constexpr double pi = M_PI;	// Pi
 extern constexpr double Re = 100.0;	// Reynolds number
-extern constexpr double B = 1.0;			// Beta
+extern constexpr double B = 0.7;			// Beta
 
 // For Parts 1,2
 extern constexpr int u0 = 1;		// Initial x velocity
