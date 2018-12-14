@@ -114,9 +114,9 @@ vector<vector<double>> jac(vector<vector<vector<double>>> &U, string FG, int FGp
 	{
 		J[0][1] = 1.0 / (2*B);
 		J[1][0] = 1.0 / 2.0;
-		J[1][1] = (U[j][i][1] + U[j][i+FGpm][1])/2 + Upm / (Re*dx);
+		J[1][1] = (U[j][i][1] + U[j][i+FGpm][1])/2 - Upm / (Re*dx);
 		J[2][1] = (U[j][i][2] + U[j][i+FGpm][2])/4;
-		J[2][2] = (U[j][i][1] + U[j][i+FGpm][1])/4 + Upm / (Re*dx);
+		J[2][2] = (U[j][i][1] + U[j][i+FGpm][1])/4 - Upm / (Re*dx);
 
 		J = ScaM(1/dx, J);
 	}
@@ -124,10 +124,10 @@ vector<vector<double>> jac(vector<vector<vector<double>>> &U, string FG, int FGp
 	else if (FG == "G")
 	{
 		J[0][2] = 1.0 / (2*B);
-		J[1][1] = (U[j][i][2] + U[j+FGpm][i][2])/4 + Upm / (Re*dy);
+		J[1][1] = (U[j][i][2] + U[j+FGpm][i][2])/4 - Upm / (Re*dy);
 		J[1][2] = (U[j][i][1] + U[j+FGpm][i][1])/4;
 		J[2][0] = 1.0 / 2.0;
-		J[2][2] = (U[j][i][2] + U[j+FGpm][i][2])/2 + Upm / (Re*dy);
+		J[2][2] = (U[j][i][2] + U[j+FGpm][i][2])/2 - Upm / (Re*dy);
 
 		J = ScaM(1/dy, J);
 	}
@@ -138,12 +138,13 @@ void Imp(vector<vector<vector<double>>> &U)
 {
 	init(U);
 	vector<vector<double>> I = Id(3);
+	vector<double> Z(3, 0.0);
 
-	for (int n = 0; n < 200; n++)
-	{
+	// for (int n = 0; n < 200; n++)
+	// {
 		vector<vector<vector<double>>> FI = flux(U);
-		// cout << "Flux Integral: " << endl;
-		// printTable(FI);
+		cout << "Flux Integral: " << endl;
+		printTable(FI);
 
 		vector<vector<vector<vector<double>>>> DX(imax, vector<vector<vector<double>>>(3, vector<vector<double>>(3, vector<double>(3))));
 		vector<vector<double>> FIx(imax, vector<double>(3));
@@ -159,6 +160,10 @@ void Imp(vector<vector<vector<double>>> &U)
 				vector<vector<double>> Cx = jac(U, "F", 1, 1, j, i);
 				vector<vector<double>> Bx = Msub(Bxp, Bxm);
 
+				// printVec2D(Ax);
+				// printVec2D(Bx);
+				// printVec2D(Cx);
+
 				Ax = ScaM(-dt, Ax);
 				Bx = ScaM(dt, Bx);
 				Cx = ScaM(dt, Cx);
@@ -168,26 +173,39 @@ void Imp(vector<vector<vector<double>>> &U)
 				DX[i][2] = Cx;
 
 				FIx[i] = ScaV(dt, FI[j][i]);
+
+				// SpewVector(FIx[i]);
+				// cout << endl;
+
+				// printVec2D(DX[i][0]);
+
 			}
 
-			DX[0][0] = I;
 			DX[0][1] = I;
-			DX[0][1][0][0] = -1;
+			DX[0][2] = I;
+			DX[0][2][0][0] = -1;
 
+			DX[imax-1][0] = I;
 			DX[imax-1][1] = I;
-			DX[imax-1][2] = I;
-			DX[imax-1][2][0][0] = -1;
+			DX[imax-1][1][0][0] = -1;
 
-			// FIx boundary cells are already set to zero
+			FIx[0] = Z;
+			FIx[imax-1] = Z;
+
 			SolveBlockTri(DX, FIx, imax);
-			Utilda[j] = FIx;
+
+			for (int i = 0; i < imax; i++)
+			{
+				Utilda[j][i] = FIx[i];
+			}
 		}
-		// cout << "Solving for lines of constant J:" << endl;
-		// printTable(Utilda);
+		cout << "Solving for lines of constant J:" << endl;
+		printTable(Utilda);
 
 		vector<vector<vector<vector<double>>>> DY(jmax, vector<vector<vector<double>>>(3, vector<vector<double>>(3, vector<double>(3))));
 		vector<vector<double>> Uty(jmax, vector<double>(3));
 		vector<vector<vector<double>>> deltaU(imax, vector<vector<double>>(jmax, vector<double>(3)));
+		vector<vector<double>> ZeroMat(3, vector<double>(3, 0.0));
 
 		for (int i = 1; i < imax - 1; i++)
 		{
@@ -210,19 +228,37 @@ void Imp(vector<vector<vector<double>>> &U)
 				Uty[j] = Utilda[j][i];
 			}
 
+			DY[0][0] = ZeroMat;
 			DY[0][1] = I;
 			DY[0][2] = I;
 			DY[0][2][0][0] = -1;
 
+
 			DY[jmax-1][0] = I;
 			DY[jmax-1][1] = I;
 			DY[jmax-1][1][0][0] = -1;
+			DY[jmax-1][2] = ZeroMat;
+
+			Uty[0] = Z;
+			Uty[jmax-1] = Z;
+
+			for (int j = 0; j < jmax; j++)
+			{
+				SpewVector(Uty[j]);
+			}
+			cout << endl;
 
 			SolveBlockTri(DY, Uty, jmax);
-			deltaU[i] = Uty;
+
+
+			
+			for (int j = 0; j < jmax; j++)
+			{
+				deltaU[j][i] = Uty[j];
+			}
 		}
-		// cout << "Solving for lines of constant I: " << endl;
-		// printTable(deltaU);
+		cout << "Solving for lines of constant I: " << endl;
+		printTable(deltaU);
 
 		for (int j = 1; j < jmax-1; j++)
 		{
@@ -230,22 +266,22 @@ void Imp(vector<vector<vector<double>>> &U)
 			{
 				for (int k = 0; k < 3; k++)
 				{
-					U[j][i][k] += deltaU[i][j][k];	// deltaU is in the shape of the transpose of U
+					U[j][i][k] += deltaU[j][i][k];	// deltaU is in the shape of the transpose of U
 				}
 			}
 		}
 		ghost(U);
-	}
+	// }
 
-	printTable(U);
+	// printTable(U);
 }
 
 int main()
 {
 	vector<vector<vector<double>>> U(jmax, vector<vector<double>>(imax, vector<double>(3)));
 	init(U);
-	// cout << "Initial condition: " << endl;
-	// printTable(U);
+	cout << "Initial condition: " << endl;
+	printTable(U);
 	Imp(U);
 	// printTable(U);
 
