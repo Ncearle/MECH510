@@ -21,7 +21,7 @@ vector<vector<vector<double>>> Madd3D(vector<vector<vector<double>>> &A, vector<
 vector<vector<vector<double>>> Msub3D(vector<vector<vector<double>>> &A, vector<vector<vector<double>>> &B);	// Matrix subtraction
 vector<vector<vector<double>>> ScaM3(double S, vector<vector<vector<double>>> &A); // Scaler 3D matrix multiplication
 vector<vector<vector<double>>> copy3(vector<vector<vector<double>>> &A); // Copies a 3D matrix
-
+double MaxV(vector<double> &A);	// Returns the maximum value of a vector
 
 vector<vector<double>> Id(int d)
 {
@@ -304,4 +304,17 @@ vector<vector<vector<double>>> copy3(vector<vector<vector<double>>> &A)
 		}
 	}
 	return C;
+}
+
+double MaxV(vector<double> &A)
+{
+	double M = A[0];
+	for (int i = 0; i < A.size(); i++)
+	{
+		if (A[i] > M)
+		{
+			M = A[i];
+		}
+	}
+	return M;
 }

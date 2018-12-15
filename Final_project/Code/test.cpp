@@ -8,7 +8,7 @@ int main()
 	vector<vector<double>> B(2, vector<double>(3));
 	vector<double> Bv(3);
 	Bv[0] = 2;
-	Bv[1] = 4;
+	Bv[1] = 40;
 	Bv[2] = 8;
 
 
@@ -40,8 +40,10 @@ int main()
 	// printVec2D(C);
 	// printVec2D(E);
 	// printVec2D(F);
-	printVec2D(G);
+	// printVec2D(G);
 
-	printVec2D(I(3));
+	// printVec2D(I(3));
+
+	cout << MaxV(Bv) << endl;
 
 }

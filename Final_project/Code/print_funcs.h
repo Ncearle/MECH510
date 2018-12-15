@@ -51,6 +51,48 @@ void printVec3D(vector<vector<vector<double>>> vec, int k)
 	cout << endl;
 }
 
+void vec3D2File(const string fName0, const string fName1, const string fName2, vector<vector<vector<double>>> &vec) // Prints 3D vector to a file
+{			
+	ofstream outfile0;
+	outfile0.open(fName0);
+	for (int j = 1; j < vec.size()-1; j++)
+	{
+		for (int i = 1; i < vec[j].size()-1; i++)
+		{
+			outfile0 << vec[j][i][0] << " ";		// Separated by a space for .dat files
+		}
+		outfile0 << endl;
+	}
+	outfile0 << endl;
+	outfile0.close();
+
+	ofstream outfile1;
+	outfile1.open(fName1);
+	for (int j = 1; j < vec.size()-1; j++)
+	{
+		for (int i = 1; i < vec[j].size()-1; i++)
+		{
+			outfile1 << vec[j][i][1] << " ";		// Separated by a space for .dat files
+		}
+		outfile1 << endl;
+	}
+	outfile1 << endl;
+	outfile1.close();
+
+	ofstream outfile2;
+	outfile2.open(fName2);
+	for (int j = 1; j < vec.size()-1; j++)
+	{
+		for (int i = 1; i < vec[j].size()-1; i++)
+		{
+			outfile2 << vec[j][i][2] << " ";		// Separated by a space for .dat files
+		}
+		outfile2 << endl;
+	}
+	outfile2 << endl;
+	outfile2.close();
+}
+
 void vec2D2File(const string fileName, vector<vector<double>> &vec) // Prints 2D vector to a file
 {			
 	ofstream outfile;
