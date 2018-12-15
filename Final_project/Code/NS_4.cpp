@@ -137,15 +137,22 @@ vector<vector<double>> jac(vector<vector<vector<double>>> &U, string FG, int FGp
 void Imp(vector<vector<vector<double>>> &U)
 {
 	init(U);
-	vector<vector<double>> I = Id(3);
-	vector<double> Z(3, 0.0);
-
-	// for (int n = 0; n < 200; n++)
-	// {
+	int nmax = 200;
+	vector<vector<double>> I = Id(3);						// 3 x 3 identity matrix
+	vector<double> ZV(3, 0.0);								// vector of zeros
+	vector<vector<double>> ZM(3, vector<double>(3, 0.0));	// 3 x 3 matrix of zeros
+	vector<vector<double>> L2(nmax, vector<double>(3));		// L2 norms for each timestep based on previous results
+	
+	int it = 0;
+	double t = dt;
+	for (int n = 0; n < nmax; n++)
+	{
+		it ++;
+		t = dt * (n+1);
 		vector<vector<vector<double>>> FI = flux(U);
-		cout << "Flux Integral: " << endl;
-		printTable(FI);
-
+		// cout << "Flux Integral: " << endl;
+		// printTable(FI);
+		vector<vector<vector<double>>> U0 = copy3(U);
 		vector<vector<vector<vector<double>>>> DX(imax, vector<vector<vector<double>>>(3, vector<vector<double>>(3, vector<double>(3))));
 		vector<vector<double>> FIx(imax, vector<double>(3));
 		vector<vector<vector<double>>> Utilda(jmax, vector<vector<double>>(imax, vector<double>(3)));
@@ -160,10 +167,6 @@ void Imp(vector<vector<vector<double>>> &U)
 				vector<vector<double>> Cx = jac(U, "F", 1, 1, j, i);
 				vector<vector<double>> Bx = Msub(Bxp, Bxm);
 
-				// printVec2D(Ax);
-				// printVec2D(Bx);
-				// printVec2D(Cx);
-
 				Ax = ScaM(-dt, Ax);
 				Bx = ScaM(dt, Bx);
 				Cx = ScaM(dt, Cx);
@@ -173,14 +176,9 @@ void Imp(vector<vector<vector<double>>> &U)
 				DX[i][2] = Cx;
 
 				FIx[i] = ScaV(dt, FI[j][i]);
-
-				// SpewVector(FIx[i]);
-				// cout << endl;
-
-				// printVec2D(DX[i][0]);
-
 			}
 
+			DX[0][0] = ZM;
 			DX[0][1] = I;
 			DX[0][2] = I;
 			DX[0][2][0][0] = -1;
@@ -188,9 +186,10 @@ void Imp(vector<vector<vector<double>>> &U)
 			DX[imax-1][0] = I;
 			DX[imax-1][1] = I;
 			DX[imax-1][1][0][0] = -1;
+			DX[imax-1][2] = ZM;
 
-			FIx[0] = Z;
-			FIx[imax-1] = Z;
+			FIx[0] = ZV;
+			FIx[imax-1] = ZV;
 
 			SolveBlockTri(DX, FIx, imax);
 
@@ -199,13 +198,13 @@ void Imp(vector<vector<vector<double>>> &U)
 				Utilda[j][i] = FIx[i];
 			}
 		}
-		cout << "Solving for lines of constant J:" << endl;
-		printTable(Utilda);
+		// cout << "Solving for lines of constant J:" << endl;
+		// printTable(Utilda);
 
 		vector<vector<vector<vector<double>>>> DY(jmax, vector<vector<vector<double>>>(3, vector<vector<double>>(3, vector<double>(3))));
 		vector<vector<double>> Uty(jmax, vector<double>(3));
 		vector<vector<vector<double>>> deltaU(imax, vector<vector<double>>(jmax, vector<double>(3)));
-		vector<vector<double>> ZeroMat(3, vector<double>(3, 0.0));
+
 
 		for (int i = 1; i < imax - 1; i++)
 		{
@@ -228,7 +227,7 @@ void Imp(vector<vector<vector<double>>> &U)
 				Uty[j] = Utilda[j][i];
 			}
 
-			DY[0][0] = ZeroMat;
+			DY[0][0] = ZM;
 			DY[0][1] = I;
 			DY[0][2] = I;
 			DY[0][2][0][0] = -1;
@@ -237,51 +236,40 @@ void Imp(vector<vector<vector<double>>> &U)
 			DY[jmax-1][0] = I;
 			DY[jmax-1][1] = I;
 			DY[jmax-1][1][0][0] = -1;
-			DY[jmax-1][2] = ZeroMat;
+			DY[jmax-1][2] = ZM;
 
-			Uty[0] = Z;
-			Uty[jmax-1] = Z;
-
-			for (int j = 0; j < jmax; j++)
-			{
-				SpewVector(Uty[j]);
-			}
-			cout << endl;
+			Uty[0] = ZV;
+			Uty[jmax-1] = ZV;
 
 			SolveBlockTri(DY, Uty, jmax);
 
-
-			
 			for (int j = 0; j < jmax; j++)
 			{
 				deltaU[j][i] = Uty[j];
 			}
 		}
-		cout << "Solving for lines of constant I: " << endl;
-		printTable(deltaU);
+		// cout << "Solving for lines of constant I: " << endl;
+		// printTable(deltaU);
 
-		for (int j = 1; j < jmax-1; j++)
-		{
-			for (int i = 1; i < imax-1; i++)
-			{
-				for (int k = 0; k < 3; k++)
-				{
-					U[j][i][k] += deltaU[j][i][k];	// deltaU is in the shape of the transpose of U
-				}
-			}
-		}
+		// deltaU = ScaM3(1.7, deltaU);
+		U = Madd3D(U, deltaU);
 		ghost(U);
-	// }
+		L2[n] = L2Norm(Msub3D(U, U0));
+	}
 
-	// printTable(U);
+	printTable(U);
+	printVec2D(L2);
+	string L2name = "L2_B07_" + to_string(nmax) + ".dat";
+	vec2D2File(L2name, L2);
+
 }
 
 int main()
 {
 	vector<vector<vector<double>>> U(jmax, vector<vector<double>>(imax, vector<double>(3)));
 	init(U);
-	cout << "Initial condition: " << endl;
-	printTable(U);
+	// cout << "Initial condition: " << endl;
+	// printTable(U);
 	Imp(U);
 	// printTable(U);
 

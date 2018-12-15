@@ -55,9 +55,9 @@ void vec2D2File(const string fileName, vector<vector<double>> &vec) // Prints 2D
 {			
 	ofstream outfile;
 	outfile.open(fileName);
-	for (int j = vec.size() - 2; j > 0; j--)
+	for (int j = 0; j < vec.size(); j++)
 	{
-		for (int i = 1; i < vec[j].size() - 1; i++)
+		for (int i = 0; i < vec[j].size(); i++)
 		{
 			outfile << vec[j][i] << " ";		// Separated by a space for .dat files
 		}

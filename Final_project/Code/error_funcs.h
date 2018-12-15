@@ -14,6 +14,7 @@ double L2Norm(vector<vector<double>> error);					// L2 Norm of the error
 double L1Norm(vector<vector<double>> error);					// L1 Norm of the error
 double Linf(vector<vector<double>> error);					// L infinite Norm of the error
 
+
 vector<vector<vector<double>>> error(vector<vector<vector<double>>> num, vector<vector<vector<double>>> exact)
 {
 	vector<vector<vector<double>>> err(jmax, vector<vector<double>>(imax, vector<double>(3)));
@@ -61,7 +62,7 @@ vector<double> L2Norm(vector<vector<vector<double>>> error)
 				sum[k] += pow(error[j][i][k], 2);
 			}
 		}
-	sum[k] = sqrt(sum[k] / ((jmax - 2)*(imax - 2)));
+		sum[k] = sqrt(sum[k] / ((jmax - 2)*(imax - 2)));
 	}
 	return sum;
 }
