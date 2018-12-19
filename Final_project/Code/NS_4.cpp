@@ -145,7 +145,7 @@ void Imp(vector<vector<vector<double>>> &U)
 	vector<double> ZV(3, 0.0);								// vector of zeros
 	vector<vector<double>> ZM(3, vector<double>(3, 0.0));	// 3 x 3 matrix of zeros
 	vector<vector<double>> L2(0, vector<double>(3));	// L2 norms for each timestep based on previous results
-	
+
 	int it = 0;
 	double tol = pow(10, -12);
 	double maxL2 = 1.0;
@@ -155,13 +155,13 @@ void Imp(vector<vector<vector<double>>> &U)
 		it ++;
 		t = dt * it;
 		vector<vector<vector<double>>> FI = flux(U);
-		// cout << "Flux Integral: " << endl;
+		// cout << "Flux Integral: (not multiplied by dt)" << endl;
 		// printTable(FI);
 		vector<vector<vector<double>>> U0 = copy3(U);
 		vector<vector<vector<vector<double>>>> DX(imax, vector<vector<vector<double>>>(3, vector<vector<double>>(3, vector<double>(3))));
 		vector<vector<double>> FIx(imax, vector<double>(3));
 		vector<vector<vector<double>>> Utilda(jmax, vector<vector<double>>(imax, vector<double>(3)));
-		// double A = 0.00001;
+		// double A = 0.0000;
 
 		for (int j = 1; j < jmax - 1; j++)
 		{
@@ -201,6 +201,7 @@ void Imp(vector<vector<vector<double>>> &U)
 			FIx[0] = ZV;
 			// FIx[0][1] = 2;
 			FIx[imax-1] = ZV;
+
 
 			SolveBlockTri(DX, FIx, imax);
 
@@ -271,6 +272,21 @@ void Imp(vector<vector<vector<double>>> &U)
 		vector<double> L2it = L2Norm(Msub3D(U, U0));
 		maxL2 = MaxV(L2it);
 		L2.push_back (L2it);
+		if (it % 50 == 0)
+		{
+
+			double P25 = 0.25 * (U[(jmax-2)/4][(imax-2)/4][0] + U[(jmax-2)/4 + 1][(imax-2)/4][0] + U[(jmax-2)/4][(imax-2)/4 + 1][0] + U[(jmax-2)/4 + 1][(imax-2)/4 + 1][0]);
+			double u25 = 0.25 * (U[(jmax-2)/4][(imax-2)/4][1] + U[(jmax-2)/4 + 1][(imax-2)/4][1] + U[(jmax-2)/4][(imax-2)/4 + 1][1] + U[(jmax-2)/4 + 1][(imax-2)/4 + 1][1]);
+			double v25 = 0.25 * (U[(jmax-2)/4][(imax-2)/4][2] + U[(jmax-2)/4 + 1][(imax-2)/4][2] + U[(jmax-2)/4][(imax-2)/4 + 1][2] + U[(jmax-2)/4 + 1][(imax-2)/4 + 1][2]);
+
+			cout << "Iteration: " << it;
+			cout << "\tP: " << P25;
+			cout << "\tu: " << u25;
+			cout << "\tv: " << v25;
+			cout << "\tL2: " << maxL2;
+			cout << endl;
+		}
+
 	}
 
 	cout << "Iterations: " << it << endl;
@@ -278,12 +294,12 @@ void Imp(vector<vector<vector<double>>> &U)
 	cout << "L2 norm: " << endl;
 	printVec(L2[it-1]);
 
+	// cout << "New U:" << endl;
 	// printTable(U);
 
 	// printVec2D(L2);
-	string L2name = "L2_U1m.dat";
-	vec2D2File(L2name, L2);
-
+	// string L2name = "L2_U1m.dat";
+	// vec2D2File(L2name, L2);
 }
 
 int main()
@@ -297,17 +313,26 @@ int main()
 	int stop_s=clock();
 	cout << "time [sec]: " << (stop_s-start_s)/double(CLOCKS_PER_SEC) << endl;
 
+
+	// double P25 = 0.25 * (U[(jmax-2)/4][(imax-2)/4][0] + U[(jmax-2)/4 + 1][(imax-2)/4][0] + U[(jmax-2)/4][(imax-2)/4 + 1][0] + U[(jmax-2)/4 + 1][(imax-2)/4 + 1][0]);
+	// double u25 = 0.25 * (U[(jmax-2)/4][(imax-2)/4][1] + U[(jmax-2)/4 + 1][(imax-2)/4][1] + U[(jmax-2)/4][(imax-2)/4 + 1][1] + U[(jmax-2)/4 + 1][(imax-2)/4 + 1][1]);
+	// double v25 = 0.25 * (U[(jmax-2)/4][(imax-2)/4][2] + U[(jmax-2)/4 + 1][(imax-2)/4][2] + U[(jmax-2)/4][(imax-2)/4 + 1][2] + U[(jmax-2)/4 + 1][(imax-2)/4 + 1][2]);
+
+	// cout << "P25: " << P25 << endl;
+	// cout << "u25: " << u25 << endl;
+	// cout << "v25: " << v25 << endl;
+
 	// printTable(U);
-	vec3D2File("U_h2_P16080.dat", "U_h2_u16080.dat", "U_h2_16080.dat", U);
-	double P5 = 0.25 * (U[(jmax-2)/2][(imax-2)/2][0] + U[(jmax-2)/2 + 1][(imax-2)/2][0] + U[(jmax-2)/2][(imax-2)/2 + 1][0] + U[(jmax-2)/2 + 1][(imax-2)/2 + 1][0]);
-	double u5 = 0.25 * (U[(jmax-2)/2][(imax-2)/2][1] + U[(jmax-2)/2 + 1][(imax-2)/2][1] + U[(jmax-2)/2][(imax-2)/2 + 1][1] + U[(jmax-2)/2 + 1][(imax-2)/2 + 1][1]);
-	double v5 = 0.25 * (U[(jmax-2)/2][(imax-2)/2][2] + U[(jmax-2)/2 + 1][(imax-2)/2][2] + U[(jmax-2)/2][(imax-2)/2 + 1][2] + U[(jmax-2)/2 + 1][(imax-2)/2 + 1][2]);
+	vec3D2File("U_h2_P16080.dat", "U_h2_u16080.dat", "U_h2_v16080.dat", U);
+	// double P5 = 0.25 * (U[(jmax-2)/2][(imax-2)/2][0] + U[(jmax-2)/2 + 1][(imax-2)/2][0] + U[(jmax-2)/2][(imax-2)/2 + 1][0] + U[(jmax-2)/2 + 1][(imax-2)/2 + 1][0]);
+	// double u5 = 0.25 * (U[(jmax-2)/2][(imax-2)/2][1] + U[(jmax-2)/2 + 1][(imax-2)/2][1] + U[(jmax-2)/2][(imax-2)/2 + 1][1] + U[(jmax-2)/2 + 1][(imax-2)/2 + 1][1]);
+	// double v5 = 0.25 * (U[(jmax-2)/2][(imax-2)/2][2] + U[(jmax-2)/2 + 1][(imax-2)/2][2] + U[(jmax-2)/2][(imax-2)/2 + 1][2] + U[(jmax-2)/2 + 1][(imax-2)/2 + 1][2]);
 
-	cout << "Grid Size: " << (jmax-2) << " x " << (imax-2) << endl;
+	// cout << "Grid Size: " << (jmax-2) << " x " << (imax-2) << endl;
 
-	cout << "P5: " << P5 << endl;
-	cout << "u5: " << u5 << endl;
-	cout << "v5: " << v5 << endl;
+	// cout << "P5: " << P5 << endl;
+	// cout << "u5: " << u5 << endl;
+	// cout << "v5: " << v5 << endl;
 
 	int k = 1;	// Index for solution: 0 = pressure; 1 = u velocity; 2 = v velocity
 	// printVec3D(FIdelta, k, p);	
