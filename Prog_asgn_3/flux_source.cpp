@@ -15,7 +15,7 @@ void init(vector<vector<double>> &T, vector<vector<double>> &u, vector<vector<do
 		{
 			double x = (i - 0.5) / (imax - 2);
 
-			T[j][i] = T0 * cos(pi*x) * sin(pi*y);	
+			T[j][i] = T0 * cos(pi*x) * sin(pi*y);
 			u[j][i] = u0 * y * sin(pi*x);
 			v[j][i] = v0 * x * cos(pi*y);
 		}
@@ -48,7 +48,6 @@ vector<vector<double>> FI2C(vector<vector<double>> &T, vector<vector<double>> &u
 		{
 			// Convective term
 			con[j][i] = -(u[j][i + 1] * T[j][i + 1] - u[j][i - 1] * T[j][i - 1]) / (2 * dx) - (v[j + 1][i] * T[j + 1][i] - v[j - 1][i] * T[j - 1][i]) / (2 * dx);
-
 			// Diffusive term
 			dif[j][i] = ((T[j][i + 1] - 2 * T[j][i] + T[j][i - 1]) / pow(dx, 2) + (T[j + 1][i] - 2 * T[j][i] + T[j - 1][i]) / pow(dy, 2)) / (Re * Pr);
 
@@ -90,16 +89,16 @@ int main()
 
 	init(T, u, v);
 	// printVec2D(T);
-	
+
 	vector<vector<double>> S = source(u, v);
 	vector<vector<double>> ExS = exactSource();
 	vector<vector<double>> FI = FI2C(T, u, v);
 	vector<vector<double>> ExFI = exactFlux();
-	
+
 	vector<vector<double>> FE = error(FI, ExFI);
 	vector<vector<double>> SE = error(S, ExS);
 
-	vector<vector<double>> FI_2 = FI2C_2(T, u, v);	
+	vector<vector<double>> FI_2 = FI2C_2(T, u, v);
 
 	vector<vector<double>> TEx(jmax, vector<double>(imax));
 	for (int j = 1; j < jmax-1; j++)
@@ -110,22 +109,24 @@ int main()
 			TEx[j][i] = ExFI[j][i] + ExS[j][i];
 		}
 	}
-	
-	printVec2D(S);
+
+	printVec2D(ExFI);
+	printVec2D(FI);
+
 
 	//printVec2D(FI_2);
 	//printVec2D(T);
 
 	//printVec2D(TEx);
 
-	vector<vector<double>> TE = error(T, TEx);
+	// vector<vector<double>> TE = error(T, TEx);
 
-	double L2TE = L2Norm(TE);
+	double L2FE = L2Norm(FE);
+	// double L2TE = L2Norm(TE);
 	// double L2SE = L2Norm(SE);
 
-	cout << "Flux L2: " << L2TE << endl;
+	cout << "Flux L2: " << L2FE << endl;
 	// cout << "Source L2: " << L2SE << endl;
 
-	getchar();
 	return 0;
 }

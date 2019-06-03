@@ -14,7 +14,7 @@ void printVec2D(vector<vector<double>> vec);		// Prints a 2D vector to the conso
 void vec2D2File(const char* fileName, vector<vector<double>> &vec); // Prints a 2D vector to a file
 void vec1D2File(const string fileName, vector<double> &vec); // Prints 1D vector to a file
 
-void printVec(vector<double> vec) 
+void printVec(vector<double> vec)
 {
 		for (int i = 0; i < vec.size(); i++)
 		{
@@ -23,11 +23,11 @@ void printVec(vector<double> vec)
 		cout << endl;
 }
 
-void printVec2D(vector<vector<double>> vec) 
+void printVec2D(vector<vector<double>> vec)
 {
-	for (int j = vec.size()-1; j > -1; j--)
+	for (int j = vec.size()-2; j > 0; j--)
 	{
-		for (int i = 0; i < vec[j].size(); i++)
+		for (int i = 1; i < vec[j].size()-1; i++)
 		{
 			cout << fixed << setprecision(3) << vec[j][i] << "  ";
 		}
@@ -38,7 +38,7 @@ void printVec2D(vector<vector<double>> vec)
 
 
 void vec2D2File(const string fileName, vector<vector<double>> &vec) // Prints 2D vector to a file
-{			
+{
 	ofstream outfile;
 	outfile.open(fileName);
 	for (int j = vec.size() - 2; j > 0; j--)
