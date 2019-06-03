@@ -152,9 +152,9 @@ int main()
 	int i = 10;
 
 	vector<vector<vector<double>>> Udelta(jmax, vector<vector<double>>(imax, vector<double>(3)));
-	Udelta[j][i][0] = pow(10, -6);
-	Udelta[j][i][1] = pow(10, -6);
-	Udelta[j][i][2] = pow(10, -6);
+	Udelta[j+1][i][0] = pow(10, -6);
+	Udelta[j+1][i][1] = pow(10, -6);
+	Udelta[j+1][i][2] = pow(10, -6);
 
 	vector<vector<vector<double>>> Unew = Madd3D(U, Udelta);
 	vector<vector<vector<double>>> FInew = flux(Unew);
